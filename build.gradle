@@ -11,8 +11,13 @@ repositories {
         name = 'sponge'
         url = 'https://repo.spongepowered.org/maven'
     }
+    maven {
+        name 'luck-repo'
+        url 'https://repo.lucko.me/'
+    }
 }
 
 dependencies {
     compile 'org.spongepowered:spongeapi:6.0.0'
+    compile 'me.lucko.luckperms:luckperms-api:3.3'
 }
