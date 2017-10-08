@@ -12,10 +12,9 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.World;
@@ -34,7 +33,7 @@ public class Hub {
     private Game game;
     private Logger logger;
     private final String hubID = "HUB_" + UUID.randomUUID();
-    private JedisPool jedis;
+    private JedisPool jedisPool;
 
     @Inject
     @DefaultConfig(sharedRoot = true)
@@ -67,7 +66,7 @@ public class Hub {
 
             logger.info("Starting RedisPool System");
             ConfigurationNode redisNode = rootNode.getNode("redis");
-            jedis = new JedisPool(new JedisPoolConfig(),
+            jedisPool = new JedisPool(new JedisPoolConfig(),
                     redisNode.getNode("ip").getString(), //IP Address
                     redisNode.getNode("port").getInt(), //Port
                     5000,  //Timeout
@@ -75,11 +74,11 @@ public class Hub {
                     0, // Database
                     hubID);
 
-            try (Jedis jedis = this.jedis.getResource()) {
+            try (Jedis jedis = jedisPool.getResource()) {
                 jedis.ping();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.trace(e.getMessage(), e);
             game.getServer().shutdown();
         }
     }
@@ -98,14 +97,14 @@ public class Hub {
             properties.setWorldTime(6000);
         });
 
-        Task.builder().execute((task) -> {
+        Task.builder().execute(task -> {
             JsonParser parser = new JsonParser();
             JsonObject serverInfo = new JsonObject();
             InetSocketAddress ip = game.getServer().getBoundAddress().get();
             serverInfo.add("name", parser.parse(hubID));
             serverInfo.add("ip", parser.parse(ip.getAddress().getHostAddress()));
             serverInfo.add("port", parser.parse(Integer.toString(ip.getPort())));
-            try(Jedis jedis = this.jedis.getResource()) {
+            try(Jedis jedis = jedisPool.getResource()) {
                 jedis.select(1);
                 jedis.hset("HUB", hubID, serverInfo.toString());
                 jedis.publish("HUB_PUBSUB", "NEW " + serverInfo.toString());
@@ -114,13 +113,19 @@ public class Hub {
 
     }
 
+    /**
+     *  this event has finished executing, Minecraft will shut down.
+     *  No further interaction with the game or other plugins should be attempted at this point.
+     *
+     * @param event
+     */
     @Listener
-    public void onGameStoppingServer(GameStoppingServerEvent event) {
-        try (Jedis jedis = this.jedis.getResource()) {
+    public void onGameStoppingServer(GameStoppedServerEvent event) {
+        try (Jedis jedis = jedisPool.getResource()) {
             jedis.select(1);
             jedis.hdel("HUB", hubID);
             jedis.publish("HUB_PUBSUB", "DELETE " + hubID);
         }
-        this.jedis.destroy();
+        jedisPool.destroy();
     }
 }
