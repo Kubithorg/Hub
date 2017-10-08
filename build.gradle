@@ -17,7 +17,22 @@ repositories {
     }
 }
 
+configurations {
+    bundle {}
+    compile.extendsFrom bundle
+}
+
 dependencies {
     compile 'org.spongepowered:spongeapi:6.0.0'
     compile 'me.lucko.luckperms:luckperms-api:3.3'
+    bundle 'redis.clients:jedis:2.9.0'
+}
+
+jar {
+    def bundled = configurations.bundle.collect { it.isDirectory() ? it : zipTree(it) }
+    from(bundled) {
+        exclude {
+            it.file.name == "plugin.yml" || it.file.name == "config.yml"
+        }
+    }
 }
