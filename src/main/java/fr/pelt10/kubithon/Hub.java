@@ -1,9 +1,9 @@
 package fr.pelt10.kubithon;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import fr.pelt10.kubithon.dataregistry.DataManager;
 import fr.pelt10.kubithon.gui.GuiManager;
-import fr.pelt10.kubithon.listeners.PlayerJoin;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -17,6 +17,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
 
+@Singleton
 @Plugin(id = "kubithonhub", name = "KubithonHub", version = "1.0-SNAPSHOT", authors = "Pelt10", description = "Plugin de Gestion du Hub pour le projet Kubithon", url = "https://kubithon.org/")
 public class Hub {
     @Getter
@@ -60,6 +61,13 @@ public class Hub {
 
         dataManager.setup();
 
+    }
+
+    @Listener
+    public void onGameInitialization(GameInitializationEvent event) {
+        logger.info("Register listeners");
+        EventManager eventManager = game.getEventManager();
+        eventManager.registerListeners(this, new GuiManager(this));
     }
 
     /**
