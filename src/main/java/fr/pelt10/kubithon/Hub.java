@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import fr.pelt10.kubithon.dataregistry.DataManager;
 import fr.pelt10.kubithon.gui.GuiManager;
+import fr.pelt10.kubithon.gui.template.MainMenu;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -14,6 +15,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
@@ -78,6 +80,9 @@ public class Hub {
         logger.info("Register listeners");
         EventManager eventManager = game.getEventManager();
         eventManager.registerListeners(this, new GuiManager(this));
+
+        guiManager = new GuiManager(this);
+        new MainMenu(this);
     }
 
     /**
@@ -89,5 +94,10 @@ public class Hub {
     @Listener
     public void onGameStoppingServer(GameStoppedServerEvent event) {
         dataManager.unregister();
+    }
+
+    @Listener
+    public void onPlayerJoinEvent(ClientConnectionEvent.Join event) {
+        getGuiManager().getGUI(MainMenu.class).ifPresent(menu -> event.getTargetEntity().openInventory(menu.getInventory()));
     }
 }

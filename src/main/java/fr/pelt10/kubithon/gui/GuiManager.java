@@ -13,7 +13,7 @@ import java.util.Optional;
 public class GuiManager {
     private Logger logger;
     private Hub hub;
-    private List<InventoryGUI> gui = new ArrayList<>();
+    private static List<InventoryGUI> gui = new ArrayList<>();
 
     public GuiManager(Hub hub) {
         this.hub = hub;
@@ -24,19 +24,18 @@ public class GuiManager {
     public void onClickInventory(ClickInventoryEvent event){
         event.setCancelled(true);
         Inventory inventory = event.getTargetInventory();
-        logger.info("Inventory Name : " + inventory.getName().get());
 
-        gui.stream().filter(inv -> inv.getName().equalsIgnoreCase(inventory.getName().get())).forEach(inv -> inv.onAction(event));
+        gui.stream().filter(inv -> inv.getDisplayName().equalsIgnoreCase(inventory.getName().get())).forEach(inv -> inv.onAction(event));
     }
 
     public void registerGUI(InventoryGUI gui) {
-        if (this.gui.stream().anyMatch(g -> g.getName().equalsIgnoreCase(gui.getName()))){
-            throw new IllegalArgumentException("An GUI already have this name.");
+        if (this.gui.stream().anyMatch(g -> g.getClass().getName().equals(gui.getClass().getName()))){
+            throw new IllegalArgumentException("GUI already registered");
         }
         this.gui.add(gui);
     }
 
-    public Optional<InventoryGUI> getGUI(String name) {
-        return gui.stream().filter(gui -> gui.getName().equalsIgnoreCase("name")).findFirst();
+    public <T extends InventoryGUI> Optional<InventoryGUI> getGUI(Class<T> clazz) {
+        return gui.stream().filter(g -> g.getClass().getName().equals(clazz.getName())).findFirst();
     }
 }

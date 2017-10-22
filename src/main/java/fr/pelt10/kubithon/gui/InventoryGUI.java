@@ -13,15 +13,17 @@ public abstract class InventoryGUI {
 
     public abstract void onAction(ClickInventoryEvent event);
 	public abstract Inventory getInventory();
-	public abstract String getName();
 	public abstract String getDisplayName();
 
 	@Inject
     public InventoryGUI(Hub hub) {
         this.hub = hub;
+        hub.getGuiManager().registerGUI(this);
     }
 
-    protected Inventory getDefaultInventory(String title, int width, int height) {
-        return Inventory.builder().of(InventoryArchetype.builder().title(Text.of(title)).property(new InventoryDimension(width, height)).build(title.toLowerCase(), title)).build(hub);
+    protected Inventory getDefaultInventory(int width, int height) {
+        return Inventory.builder().of(
+                InventoryArchetype.builder().title(Text.of(getDisplayName())).property(new InventoryDimension(width, height)).build(getDisplayName().toLowerCase(), getDisplayName())
+        ).build(hub);
     }
 }
