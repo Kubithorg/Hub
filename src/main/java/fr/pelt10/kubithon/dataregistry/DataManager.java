@@ -26,9 +26,7 @@ public class DataManager {
     @Getter
     private final String hubID = "HUB_" + UUID.randomUUID();
 
-    @Inject
-    @DefaultConfig(sharedRoot = true)
-    private Path config;
+
     private ConfigurationLoader<CommentedConfigurationNode> loader;
     private ConfigurationNode rootNode;
 
@@ -36,7 +34,7 @@ public class DataManager {
     private Hub hub;
     private JedisPool jedisPool;
 
-    public DataManager(Hub hub) {
+    public DataManager(Hub hub, Path config) {
         this.hub = hub;
         logger = hub.getLogger();
 
@@ -80,7 +78,7 @@ public class DataManager {
                 jedis.hset(RedisKeys.getHUB_KEY_NAME(), hubID, serverInfo.toString());
                 jedis.publish(RedisKeys.getHUB_PUBSUB_CHANNEL(), "NEW " + serverInfo.toString());
             }
-        }).submit(this);
+        }).submit(hub);
     }
 
     public void unregister() {

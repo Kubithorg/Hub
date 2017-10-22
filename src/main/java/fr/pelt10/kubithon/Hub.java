@@ -7,6 +7,7 @@ import fr.pelt10.kubithon.gui.GuiManager;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -16,6 +17,8 @@ import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
+
+import java.nio.file.Path;
 
 @Singleton
 @Plugin(id = "kubithonhub", name = "KubithonHub", version = "1.0-SNAPSHOT", authors = "Pelt10", description = "Plugin de Gestion du Hub pour le projet Kubithon", url = "https://kubithon.org/")
@@ -27,6 +30,13 @@ public class Hub {
 
     @Getter
     private DataManager dataManager;
+
+    @Getter
+    private GuiManager guiManager;
+
+    @Inject
+    @DefaultConfig(sharedRoot = true)
+    private Path config;
 
     @Inject
     public Hub(Game game, Logger logger) {
@@ -42,7 +52,7 @@ public class Hub {
      */
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
-        dataManager = new DataManager(this);
+        dataManager = new DataManager(this, config);
     }
 
     /**
