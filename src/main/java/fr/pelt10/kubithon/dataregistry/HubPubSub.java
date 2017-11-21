@@ -1,5 +1,6 @@
 package fr.pelt10.kubithon.dataregistry;
 
+import org.slf4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
@@ -10,17 +11,20 @@ import java.util.stream.Collectors;
 public class HubPubSub extends JedisPubSub implements Runnable {
     private JedisPool jedisPool;
     private List<HubInstance> hubInstanceList;
+    private Logger logger;
     private boolean run = true;
 
-    public HubPubSub(JedisPool jedisPool, List<HubInstance> hubInstanceList) {
+    public HubPubSub(JedisPool jedisPool, List<HubInstance> hubInstanceList, Logger logger) {
         this.jedisPool = jedisPool;
         this.hubInstanceList = hubInstanceList;
+        this.logger = logger;
     }
 
     @Override
     public void run() {
         while (run) {
             try (Jedis jedis = jedisPool.getResource()) {
+                jedis.select(RedisKeys.HUB_DB_ID);
                 jedis.subscribe(this, RedisKeys.HUB_PUBSUB_CHANNEL);
             }
         }
@@ -33,10 +37,13 @@ public class HubPubSub extends JedisPubSub implements Runnable {
 
         switch (command) {
             case RedisKeys.PUBSUB_CMD_NEW_HUB:
-                hubInstanceList.add(HubInstance.deserialize(args[0]));
+                HubInstance hubInstance = HubInstance.deserialize(args[0]);
+                hubInstanceList.add(hubInstance);
+                logger.info("New Hub add : " + hubInstance.getHubID());
                 break;
             case RedisKeys.PUBSUB_CMD_DELETE_HUB:
                 hubInstanceList  = hubInstanceList.stream().filter(hub -> hub.getHubID().equals(args[0])).collect(Collectors.toList());
+                logger.info("Remove Hub : " + args[0]);
                 break;
             default:
                 //TODO Log ?

@@ -63,33 +63,35 @@ public class DataManager {
                     hubInstance.getHubID());
 
             try (Jedis jedis = jedisPool.getResource()) {
+                jedis.select(RedisKeys.HUB_DB_ID);
                 jedis.ping();
+                logger.info("Loading Started Hub...");
+                jedis.hgetAll(RedisKeys.HUB_KEY_NAME).values().stream().map(HubInstance::deserialize).forEach(hubInstance -> {
+                    hubInstanceList.add(hubInstance);
+                    logger.info(" - " + hubInstance.getHubID() + " load.");
+                });
             }
         } catch (IOException e) {
             logger.trace(e.getMessage(), e);
             hub.getGame().getServer().shutdown();
         }
-    }
 
-    public void setup() {
-        Task.builder().execute(task -> {
-            String serialize = HubInstance.serialize(hubInstance);
-            try(Jedis jedis = jedisPool.getResource()) {
-                jedis.select(RedisKeys.getHUB_DB_ID());
-                jedis.hset(RedisKeys.getHUB_KEY_NAME(), hubInstance.getHubID(), serialize);
-                jedis.publish(RedisKeys.getHUB_PUBSUB_CHANNEL(), RedisKeys.getPUBSUB_CMD_NEW_HUB() + serialize);
-            }
-        }).submit(hub);
-
-        hubPubSub = new HubPubSub(jedisPool, hubInstanceList);
+        hubPubSub = new HubPubSub(jedisPool, hubInstanceList, hub.getLogger());
         new Thread(hubPubSub).start();
+
+        String serialize = HubInstance.serialize(hubInstance);
+        try(Jedis jedis = jedisPool.getResource()) {
+            jedis.select(RedisKeys.HUB_DB_ID);
+            jedis.hset(RedisKeys.HUB_KEY_NAME, hubInstance.getHubID(), serialize);
+            jedis.publish(RedisKeys.HUB_PUBSUB_CHANNEL, RedisKeys.PUBSUB_CMD_NEW_HUB + " " + serialize);
+        }
     }
 
     public void unregister() {
         try (Jedis jedis = jedisPool.getResource()) {
-            jedis.select(RedisKeys.getHUB_DB_ID());
-            jedis.hdel(RedisKeys.getHUB_KEY_NAME(), hubInstance.getHubID());
-            jedis.publish(RedisKeys.getHUB_PUBSUB_CHANNEL(), RedisKeys.getPUBSUB_CMD_DELETE_HUB() + hubInstance.getHubID());
+            jedis.select(RedisKeys.HUB_DB_ID);
+            jedis.hdel(RedisKeys.HUB_KEY_NAME, hubInstance.getHubID());
+            jedis.publish(RedisKeys.HUB_PUBSUB_CHANNEL, RedisKeys.PUBSUB_CMD_DELETE_HUB + " " + hubInstance.getHubID());
         }
         hubPubSub.unsubscribe();
         jedisPool.destroy();

@@ -56,7 +56,7 @@ public class Hub {
      */
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
-        dataManager = new DataManager(this, config);
+
     }
 
     /**
@@ -73,7 +73,7 @@ public class Hub {
             properties.setWorldTime(6000);
         });
 
-        dataManager.setup();
+        dataManager = new DataManager(this, config);
 
     }
 
