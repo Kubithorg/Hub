@@ -1,8 +1,5 @@
 package fr.pelt10.kubithon.dataregistry;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.inject.Inject;
 import fr.pelt10.kubithon.Hub;
 import lombok.Getter;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -11,7 +8,6 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
-import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.scheduler.Task;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -20,18 +16,24 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class DataManager {
     @Getter
-    private final String hubID = "HUB_" + UUID.randomUUID();
+    private HubInstance hubInstance;
 
     private ConfigurationLoader<CommentedConfigurationNode> loader;
     private ConfigurationNode rootNode;
 
     private Logger logger;
     private Hub hub;
+
     private JedisPool jedisPool;
+    private HubPubSub hubPubSub;
+
+    private List<HubInstance> hubInstanceList = new ArrayList<>();
 
 
     public DataManager(Hub hub, Path config) {
@@ -39,7 +41,11 @@ public class DataManager {
         logger = hub.getLogger();
 
         logger.info("Loading data");
-        logger.info("Hub ID : {}", hubID);
+
+        InetSocketAddress ip = hub.getGame().getServer().getBoundAddress().get();
+        hubInstance = new HubInstance("HUB_" + UUID.randomUUID(), ip.getAddress().getHostAddress(), ip.getPort());
+
+        logger.info("Hub ID : {}", hubInstance.getHubID());
 
         logger.info("Loading ConfigFile");
         loader = HoconConfigurationLoader.builder().setPath(config).build();
@@ -54,7 +60,7 @@ public class DataManager {
                     5000,  //Timeout
                     redisNode.getNode("password").getString(), //Password
                     0, // Database
-                    hubID);
+                    hubInstance.getHubID());
 
             try (Jedis jedis = jedisPool.getResource()) {
                 jedis.ping();
@@ -67,26 +73,25 @@ public class DataManager {
 
     public void setup() {
         Task.builder().execute(task -> {
-            JsonParser parser = new JsonParser();
-            JsonObject serverInfo = new JsonObject();
-            InetSocketAddress ip = hub.getGame().getServer().getBoundAddress().get();
-            serverInfo.add("name", parser.parse(hubID));
-            serverInfo.add("ip", parser.parse(ip.getAddress().getHostAddress()));
-            serverInfo.add("port", parser.parse(Integer.toString(ip.getPort())));
+            String serialize = HubInstance.serialize(hubInstance);
             try(Jedis jedis = jedisPool.getResource()) {
                 jedis.select(RedisKeys.getHUB_DB_ID());
-                jedis.hset(RedisKeys.getHUB_KEY_NAME(), hubID, serverInfo.toString());
-                jedis.publish(RedisKeys.getHUB_PUBSUB_CHANNEL(), "NEW " + serverInfo.toString());
+                jedis.hset(RedisKeys.getHUB_KEY_NAME(), hubInstance.getHubID(), serialize);
+                jedis.publish(RedisKeys.getHUB_PUBSUB_CHANNEL(), RedisKeys.getPUBSUB_CMD_NEW_HUB() + serialize);
             }
         }).submit(hub);
+
+        hubPubSub = new HubPubSub(jedisPool, hubInstanceList);
+        new Thread(hubPubSub).start();
     }
 
     public void unregister() {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.select(RedisKeys.getHUB_DB_ID());
-            jedis.hdel(RedisKeys.getHUB_KEY_NAME(), hubID);
-            jedis.publish(RedisKeys.getHUB_PUBSUB_CHANNEL(), "DELETE " + hubID);
+            jedis.hdel(RedisKeys.getHUB_KEY_NAME(), hubInstance.getHubID());
+            jedis.publish(RedisKeys.getHUB_PUBSUB_CHANNEL(), RedisKeys.getPUBSUB_CMD_DELETE_HUB() + hubInstance.getHubID());
         }
+        hubPubSub.unsubscribe();
         jedisPool.destroy();
     }
 }
