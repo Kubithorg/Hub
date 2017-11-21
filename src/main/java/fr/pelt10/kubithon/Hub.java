@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import fr.pelt10.kubithon.dataregistry.DataManager;
 import fr.pelt10.kubithon.gui.GuiManager;
+import fr.pelt10.kubithon.gui.template.HubMenu;
 import fr.pelt10.kubithon.gui.template.MainMenu;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -85,6 +86,7 @@ public class Hub {
 
         guiManager = new GuiManager(this);
         new MainMenu(this);
+        new HubMenu(this);
     }
 
     /**

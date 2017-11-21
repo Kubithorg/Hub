@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,8 @@ public class DataManager {
     private JedisPool jedisPool;
     private HubPubSub hubPubSub;
 
-    private List<HubInstance> hubInstanceList = new ArrayList<>();
+    @Getter
+    private List<HubInstance> hubList = new ArrayList<>();
 
 
     public DataManager(Hub hub, Path config) {
@@ -67,7 +69,7 @@ public class DataManager {
                 jedis.ping();
                 logger.info("Loading Started Hub...");
                 jedis.hgetAll(RedisKeys.HUB_KEY_NAME).values().stream().map(HubInstance::deserialize).forEach(hubInstance -> {
-                    hubInstanceList.add(hubInstance);
+                    hubList.add(hubInstance);
                     logger.info(" - " + hubInstance.getHubID() + " load.");
                 });
             }
@@ -76,15 +78,18 @@ public class DataManager {
             hub.getGame().getServer().shutdown();
         }
 
-        hubPubSub = new HubPubSub(jedisPool, hubInstanceList, hub.getLogger());
+        hubPubSub = new HubPubSub(jedisPool, hubList, hub.getLogger());
         new Thread(hubPubSub).start();
 
-        String serialize = HubInstance.serialize(hubInstance);
-        try(Jedis jedis = jedisPool.getResource()) {
-            jedis.select(RedisKeys.HUB_DB_ID);
-            jedis.hset(RedisKeys.HUB_KEY_NAME, hubInstance.getHubID(), serialize);
-            jedis.publish(RedisKeys.HUB_PUBSUB_CHANNEL, RedisKeys.PUBSUB_CMD_NEW_HUB + " " + serialize);
-        }
+        Task.builder().execute(() -> {
+            String serialize = HubInstance.serialize(hubInstance);
+            try(Jedis jedis = jedisPool.getResource()) {
+                jedis.select(RedisKeys.HUB_DB_ID);
+                jedis.hset(RedisKeys.HUB_KEY_NAME, hubInstance.getHubID(), serialize);
+                jedis.publish(RedisKeys.HUB_PUBSUB_CHANNEL, RedisKeys.PUBSUB_CMD_NEW_HUB + " " + serialize);
+            }
+        }).submit(hub);
+
     }
 
     public void unregister() {
