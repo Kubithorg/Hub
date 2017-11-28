@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HubPubSub extends JedisPubSub implements Runnable {
-    private JedisPool jedisPool;
+    private JedisUtils jedisUtils;
     private List<HubInstance> hubInstanceList;
     private Logger logger;
     private boolean run = true;
 
-    public HubPubSub(JedisPool jedisPool, List<HubInstance> hubInstanceList, Logger logger) {
-        this.jedisPool = jedisPool;
+    public HubPubSub(JedisUtils jedisUtils, List<HubInstance> hubInstanceList, Logger logger) {
+        this.jedisUtils = jedisUtils;
         this.hubInstanceList = hubInstanceList;
         this.logger = logger;
     }
@@ -23,10 +23,10 @@ public class HubPubSub extends JedisPubSub implements Runnable {
     @Override
     public void run() {
         while (run) {
-            try (Jedis jedis = jedisPool.getResource()) {
+            jedisUtils.execute(jedis -> {
                 jedis.select(RedisKeys.HUB_DB_ID);
                 jedis.subscribe(this, RedisKeys.HUB_PUBSUB_CHANNEL);
-            }
+            });
         }
     }
 

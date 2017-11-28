@@ -9,9 +9,6 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.scheduler.Task;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -30,7 +27,8 @@ public class DataManager {
     private Logger logger;
     private Hub hub;
 
-    private JedisPool jedisPool;
+    @Getter
+    private JedisUtils jedisUtils;
     private HubPubSub hubPubSub;
 
     @Getter
@@ -55,15 +53,12 @@ public class DataManager {
 
             logger.info("Starting RedisPool System");
             ConfigurationNode redisNode = rootNode.getNode("redis");
-            jedisPool = new JedisPool(new JedisPoolConfig(),
-                    redisNode.getNode("ip").getString(), //IP Address
-                    redisNode.getNode("port").getInt(), //Port
-                    5000,  //Timeout
-                    redisNode.getNode("password").getString(), //Password
-                    0, // Database
+            jedisUtils = new JedisUtils(redisNode.getNode("ip").getString(),
+                    redisNode.getNode("port").getInt(),
+                    redisNode.getNode("password").getString(),
                     hubInstance.getHubID());
 
-            try (Jedis jedis = jedisPool.getResource()) {
+            jedisUtils.execute(jedis -> {
                 jedis.select(RedisKeys.HUB_DB_ID);
                 jedis.ping();
                 logger.info("Loading Started Hub...");
@@ -71,33 +66,33 @@ public class DataManager {
                     hubList.add(hubInstance);
                     logger.info(" - " + hubInstance.getHubID() + " load.");
                 });
-            }
+            });
         } catch (IOException e) {
             logger.trace(e.getMessage(), e);
             hub.getGame().getServer().shutdown();
         }
 
-        hubPubSub = new HubPubSub(jedisPool, hubList, hub.getLogger());
+        hubPubSub = new HubPubSub(jedisUtils, hubList, hub.getLogger());
         new Thread(hubPubSub).start();
 
         Task.builder().execute(() -> {
             String serialize = HubInstance.serialize(hubInstance);
-            try(Jedis jedis = jedisPool.getResource()) {
+            jedisUtils.execute(jedis -> {
                 jedis.select(RedisKeys.HUB_DB_ID);
                 jedis.hset(RedisKeys.HUB_KEY_NAME, hubInstance.getHubID(), serialize);
                 jedis.publish(RedisKeys.HUB_PUBSUB_CHANNEL, RedisKeys.PUBSUB_CMD_NEW_HUB + " " + serialize);
-            }
+            });
         }).submit(hub);
 
     }
 
     public void unregister() {
-        try (Jedis jedis = jedisPool.getResource()) {
+        jedisUtils.execute(jedis -> {
             jedis.select(RedisKeys.HUB_DB_ID);
             jedis.hdel(RedisKeys.HUB_KEY_NAME, hubInstance.getHubID());
             jedis.publish(RedisKeys.HUB_PUBSUB_CHANNEL, RedisKeys.PUBSUB_CMD_DELETE_HUB + " " + hubInstance.getHubID());
-        }
+        });
         hubPubSub.unsubscribe();
-        jedisPool.destroy();
+        jedisUtils.destroy();
     }
 }
