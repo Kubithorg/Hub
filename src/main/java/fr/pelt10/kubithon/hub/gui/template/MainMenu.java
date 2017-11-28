@@ -1,7 +1,7 @@
-package fr.pelt10.kubithon.gui.template;
+package fr.pelt10.kubithon.hub.gui.template;
 
-import fr.pelt10.kubithon.Hub;
-import fr.pelt10.kubithon.gui.InventoryGUI;
+import fr.pelt10.kubithon.hub.Hub;
+import fr.pelt10.kubithon.hub.gui.InventoryGUI;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.item.inventory.Inventory;

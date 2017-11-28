@@ -1,6 +1,6 @@
-package fr.pelt10.kubithon.gui;
+package fr.pelt10.kubithon.hub.gui;
 
-import fr.pelt10.kubithon.Hub;
+import fr.pelt10.kubithon.hub.Hub;
 import org.slf4j.Logger;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;

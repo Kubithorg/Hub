@@ -1,4 +1,4 @@
-package fr.pelt10.kubithon.dataregistry;
+package fr.pelt10.kubithon.hub.dataregistry;
 
 import org.slf4j.Logger;
 import redis.clients.jedis.Jedis;

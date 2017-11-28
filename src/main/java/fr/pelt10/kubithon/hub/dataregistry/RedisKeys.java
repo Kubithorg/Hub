@@ -1,4 +1,4 @@
-package fr.pelt10.kubithon.dataregistry;
+package fr.pelt10.kubithon.hub.dataregistry;
 
 public class RedisKeys {
     public static final int HUB_DB_ID = 1;

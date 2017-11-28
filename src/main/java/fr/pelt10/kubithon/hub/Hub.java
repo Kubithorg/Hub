@@ -1,12 +1,12 @@
-package fr.pelt10.kubithon;
+package fr.pelt10.kubithon.hub;
 
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import fr.pelt10.kubithon.dataregistry.DataManager;
-import fr.pelt10.kubithon.gui.GuiManager;
-import fr.pelt10.kubithon.gui.template.HubMenu;
-import fr.pelt10.kubithon.gui.template.MainMenu;
+import fr.pelt10.kubithon.hub.dataregistry.DataManager;
+import fr.pelt10.kubithon.hub.gui.GuiManager;
+import fr.pelt10.kubithon.hub.gui.template.HubMenu;
+import fr.pelt10.kubithon.hub.gui.template.MainMenu;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;

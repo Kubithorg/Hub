@@ -1,7 +1,7 @@
-package fr.pelt10.kubithon.gui;
+package fr.pelt10.kubithon.hub.gui;
 
 import com.google.inject.Inject;
-import fr.pelt10.kubithon.Hub;
+import fr.pelt10.kubithon.hub.Hub;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetype;

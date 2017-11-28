@@ -1,6 +1,6 @@
-package fr.pelt10.kubithon.dataregistry;
+package fr.pelt10.kubithon.hub.dataregistry;
 
-import fr.pelt10.kubithon.Hub;
+import fr.pelt10.kubithon.hub.Hub;
 import lombok.Getter;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
