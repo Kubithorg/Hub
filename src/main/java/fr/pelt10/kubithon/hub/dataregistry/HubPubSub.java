@@ -1,5 +1,6 @@
 package fr.pelt10.kubithon.hub.dataregistry;
 
+import fr.pelt10.kubithon.hub.utils.ServerInstance;
 import org.slf4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -10,11 +11,11 @@ import java.util.stream.Collectors;
 
 public class HubPubSub extends JedisPubSub implements Runnable {
     private JedisUtils jedisUtils;
-    private List<HubInstance> hubInstanceList;
+    private List<ServerInstance> hubInstanceList;
     private Logger logger;
     private boolean run = true;
 
-    public HubPubSub(JedisUtils jedisUtils, List<HubInstance> hubInstanceList, Logger logger) {
+    public HubPubSub(JedisUtils jedisUtils, List<ServerInstance> hubInstanceList, Logger logger) {
         this.jedisUtils = jedisUtils;
         this.hubInstanceList = hubInstanceList;
         this.logger = logger;
@@ -37,7 +38,7 @@ public class HubPubSub extends JedisPubSub implements Runnable {
 
         switch (command) {
             case RedisKeys.PUBSUB_CMD_NEW_HUB:
-                HubInstance hubInstance = HubInstance.deserialize(args[0]);
+                ServerInstance hubInstance = ServerInstance.deserialize(args[0]);
                 hubInstanceList.add(hubInstance);
                 logger.info("New Hub add : " + hubInstance.getHubID());
                 break;

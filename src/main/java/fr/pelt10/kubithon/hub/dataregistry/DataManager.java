@@ -1,6 +1,7 @@
 package fr.pelt10.kubithon.hub.dataregistry;
 
 import fr.pelt10.kubithon.hub.Hub;
+import fr.pelt10.kubithon.hub.utils.ServerInstance;
 import lombok.Getter;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 public class DataManager {
     @Getter
-    private HubInstance hubInstance;
+    private ServerInstance hubInstance;
 
     private ConfigurationLoader<CommentedConfigurationNode> loader;
     private ConfigurationNode rootNode;
@@ -32,7 +33,7 @@ public class DataManager {
     private HubPubSub hubPubSub;
 
     @Getter
-    private List<HubInstance> hubList = new ArrayList<>();
+    private List<ServerInstance> hubList = new ArrayList<>();
 
 
     public DataManager(Hub hub, Path config) {
@@ -42,7 +43,7 @@ public class DataManager {
         logger.info("Loading data");
 
         InetSocketAddress ip = hub.getGame().getServer().getBoundAddress().get();
-        hubInstance = new HubInstance("HUB_" + UUID.randomUUID(), ip.getAddress().getHostAddress(), ip.getPort());
+        hubInstance = new ServerInstance("HUB_" + UUID.randomUUID(), ip.getAddress().getHostAddress(), ip.getPort());
 
         logger.info("Hub ID : {}", hubInstance.getHubID());
 
@@ -62,7 +63,7 @@ public class DataManager {
                 jedis.select(RedisKeys.HUB_DB_ID);
                 jedis.ping();
                 logger.info("Loading Started Hub...");
-                jedis.hgetAll(RedisKeys.HUB_KEY_NAME).values().stream().map(HubInstance::deserialize).forEach(hubInstance -> {
+                jedis.hgetAll(RedisKeys.HUB_KEY_NAME).values().stream().map(ServerInstance::deserialize).forEach(hubInstance -> {
                     hubList.add(hubInstance);
                     logger.info(" - " + hubInstance.getHubID() + " load.");
                 });
@@ -76,7 +77,7 @@ public class DataManager {
         new Thread(hubPubSub).start();
 
         Task.builder().execute(() -> {
-            String serialize = HubInstance.serialize(hubInstance);
+            String serialize = ServerInstance.serialize(hubInstance);
             jedisUtils.execute(jedis -> {
                 jedis.select(RedisKeys.HUB_DB_ID);
                 jedis.hset(RedisKeys.HUB_KEY_NAME, hubInstance.getHubID(), serialize);
