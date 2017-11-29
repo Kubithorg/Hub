@@ -3,6 +3,9 @@ package fr.pelt10.kubithon.hub;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import fr.pelt10.kubithon.hub.com.CommunicationManager;
+import fr.pelt10.kubithon.hub.com.CommunicationMessage;
+import fr.pelt10.kubithon.hub.com.messages.PlayerTeleportMessage;
 import fr.pelt10.kubithon.hub.dataregistry.DataManager;
 import fr.pelt10.kubithon.hub.gui.GuiManager;
 import fr.pelt10.kubithon.hub.gui.template.HubMenu;
@@ -42,6 +45,8 @@ public class Hub {
     @DefaultConfig(sharedRoot = true)
     private Path config;
 
+    @Getter
+    private CommunicationManager communicationManager;
 
     @Inject
     public Hub(Game game, Logger logger) {
@@ -87,6 +92,9 @@ public class Hub {
         guiManager = new GuiManager(this);
         new MainMenu(this);
         new HubMenu(this);
+
+        communicationManager = new CommunicationManager();
+        communicationManager.registerMessage(new PlayerTeleportMessage(dataManager.getJedisUtils()));
     }
 
     /**
