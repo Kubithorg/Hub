@@ -81,6 +81,8 @@ public class Hub {
 
         dataManager = new DataManager(this, config);
 
+        communicationManager = new CommunicationManager();
+        communicationManager.registerMessage(new PlayerTeleportMessage(dataManager.getJedisUtils()));
     }
 
     @Listener
@@ -92,9 +94,6 @@ public class Hub {
         guiManager = new GuiManager(this);
         new MainMenu(this);
         new HubMenu(this);
-
-        communicationManager = new CommunicationManager();
-        communicationManager.registerMessage(new PlayerTeleportMessage(dataManager.getJedisUtils()));
     }
 
     /**
