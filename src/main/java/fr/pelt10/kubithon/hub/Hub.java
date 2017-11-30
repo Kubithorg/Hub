@@ -109,6 +109,6 @@ public class Hub {
 
     @Listener
     public void onPlayerJoinEvent(ClientConnectionEvent.Join event) {
-        getGuiManager().getGUI(MainMenu.class).ifPresent(menu -> event.getTargetEntity().openInventory(menu.getInventory()));
+        getGuiManager().getGUI(HubMenu.class).ifPresent(menu -> event.getTargetEntity().openInventory(menu.getInventory()));
     }
 }

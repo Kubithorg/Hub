@@ -8,14 +8,16 @@ import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.text.Text;
 
 public class MainMenu extends InventoryGUI {
+    private Hub hub;
 
     public MainMenu(Hub hub) {
         super(hub);
+        this.hub = hub;
     }
 
     @Override
     public void onAction(ClickInventoryEvent event) {
-        event.getCause().first(Player.class).ifPresent(player -> player.sendMessage(Text.of("Ceci est un super test !")));
+        hub.getGuiManager().getGUI(HubMenu.class).ifPresent(menu -> event.getCause().first(Player.class).ifPresent(player -> player.openInventory(menu.getInventory())));
     }
 
     @Override

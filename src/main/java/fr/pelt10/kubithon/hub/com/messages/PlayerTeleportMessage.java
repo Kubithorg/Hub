@@ -17,8 +17,11 @@ public class PlayerTeleportMessage implements CommunicationMessage {
 
     @Override
     public void send(Object[] datas) {
-        if (datas.length != 2 && datas[0] instanceof UUID && datas[1] instanceof ServerInstance) {
-            jedisUtils.execute(jedis -> jedis.publish(RedisKeys.COMM_PUBSUB_CHANNEL, RedisKeys.COMM_PLAYER_TP + " " + ((UUID)datas[0]).toString() + " " + ServerInstance.serialize((ServerInstance)datas[1])));
+        if (datas.length == 2 && datas[0] instanceof UUID && datas[1] instanceof ServerInstance) {
+            jedisUtils.execute(jedis -> {
+                jedis.select(RedisKeys.HUB_DB_ID);
+                jedis.publish(RedisKeys.COMM_PUBSUB_CHANNEL, RedisKeys.COMM_PLAYER_TP + " " + ((UUID)datas[0]).toString() + " " + ServerInstance.serialize((ServerInstance)datas[1]));
+            });
         }
     }
 }

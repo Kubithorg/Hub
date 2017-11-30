@@ -16,6 +16,7 @@ import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class DataManager {
@@ -95,5 +96,9 @@ public class DataManager {
         });
         hubPubSub.unsubscribe();
         jedisUtils.destroy();
+    }
+
+    public Optional<ServerInstance> getHub(String name) {
+        return hubList.stream().filter(hub -> hub.getHubID().equals(name)).findFirst();
     }
 }
