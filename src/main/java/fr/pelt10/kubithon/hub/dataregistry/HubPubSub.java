@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 
 public class HubPubSub extends JedisPubSub implements Runnable {
     private JedisUtils jedisUtils;
-    private List<ServerInstance> hubInstanceList;
+    private DataManager dataManager;
     private Logger logger;
     private boolean run = true;
 
-    public HubPubSub(JedisUtils jedisUtils, List<ServerInstance> hubInstanceList, Logger logger) {
+    public HubPubSub(JedisUtils jedisUtils, DataManager dataManager, Logger logger) {
         this.jedisUtils = jedisUtils;
-        this.hubInstanceList = hubInstanceList;
+        this.dataManager = dataManager;
         this.logger = logger;
     }
 
@@ -39,11 +39,11 @@ public class HubPubSub extends JedisPubSub implements Runnable {
         switch (command) {
             case RedisKeys.PUBSUB_CMD_NEW_HUB:
                 ServerInstance hubInstance = ServerInstance.deserialize(args[0]);
-                hubInstanceList.add(hubInstance);
+                dataManager.getHubList().add(hubInstance);
                 logger.info("New Hub add : " + hubInstance.getHubID());
                 break;
             case RedisKeys.PUBSUB_CMD_DELETE_HUB:
-                hubInstanceList  = hubInstanceList.stream().filter(hub -> hub.getHubID().equals(args[0])).collect(Collectors.toList());
+                dataManager.getHubList().removeIf(hub -> hub.getHubID().equals(args[0]));
                 logger.info("Remove Hub : " + args[0]);
                 break;
             default:

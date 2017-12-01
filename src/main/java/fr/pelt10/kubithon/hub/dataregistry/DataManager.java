@@ -74,7 +74,7 @@ public class DataManager {
             hub.getGame().getServer().shutdown();
         }
 
-        hubPubSub = new HubPubSub(jedisUtils, hubList, hub.getLogger());
+        hubPubSub = new HubPubSub(jedisUtils, this, hub.getLogger());
         new Thread(hubPubSub).start();
 
         Task.builder().execute(() -> {
