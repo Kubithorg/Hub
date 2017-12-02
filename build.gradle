@@ -2,6 +2,7 @@ group 'fr.pelt10.kubithon'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'idea'
 
 sourceCompatibility = 1.8
 
