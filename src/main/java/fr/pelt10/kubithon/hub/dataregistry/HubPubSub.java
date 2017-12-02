@@ -47,7 +47,7 @@ public class HubPubSub extends JedisPubSub implements Runnable {
                 logger.info("Remove Hub : " + args[0]);
                 break;
             default:
-                //TODO Log ?
+                logger.error("HubPubSub Command unknown : \"{}\"", command);
                 break;
         }
     }
