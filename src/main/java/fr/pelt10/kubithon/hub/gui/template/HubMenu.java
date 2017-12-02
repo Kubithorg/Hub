@@ -36,8 +36,8 @@ public class HubMenu extends InventoryGUI {
     @Override
     public Inventory getInventory() {
         Inventory inv = getDefaultInventory(9, 6);
-        ItemStack itemStack = ItemStack.builder().itemType(ItemTypes.BEACON).build();
         hub.getDataManager().getHubList().forEach(hub -> {
+            ItemStack itemStack = ItemStack.builder().itemType(ItemTypes.BEACON).build();
             itemStack.offer(Keys.DISPLAY_NAME, Text.of(hub.getHubID()));
             inv.offer(itemStack);
         });
