@@ -11,9 +11,14 @@ import fr.pelt10.kubithon.hub.gui.GuiManager;
 import fr.pelt10.kubithon.hub.gui.template.HubMenu;
 import fr.pelt10.kubithon.hub.gui.template.MainMenu;
 import lombok.Getter;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketChat;
+import net.minecraft.network.play.server.SPacketDestroyEntities;
+import net.minecraft.util.text.TextComponentString;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -110,5 +115,10 @@ public class Hub {
     @Listener
     public void onPlayerJoinEvent(ClientConnectionEvent.Join event) {
         getGuiManager().getGUI(HubMenu.class).ifPresent(menu -> event.getTargetEntity().openInventory(menu.getInventory()));
+
+        //Some tests...
+        Player player = event.getTargetEntity();
+        EntityPlayerMP thePlayer = (EntityPlayerMP)player;
+        thePlayer.connection.sendPacket(new SPacketDestroyEntities(thePlayer.getEntityId()));
     }
 }
