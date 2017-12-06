@@ -1,10 +1,37 @@
+buildscript {
+    repositories {
+        maven {
+            name = 'forge'
+            url = 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name = 'sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
+    }
+
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.5-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'org.spongepowered.plugin' version '0.8.1'
+    id 'net.minecrell.vanillagradle.server' version '2.2-3'
+}
+
 group 'fr.pelt10.kubithon'
 version '1.0-SNAPSHOT'
+//archivesBaseName 'hub'
 
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'maven'
 apply plugin: 'java'
 apply plugin: 'idea'
 
 sourceCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
 
 repositories {
     mavenCentral()
@@ -28,6 +55,12 @@ dependencies {
     compile 'org.spongepowered:spongeapi:7.0.0-SNAPSHOT'
     compile 'me.lucko.luckperms:luckperms-api:3.3'
     bundle 'redis.clients:jedis:2.9.0'
+}
+
+minecraft {
+    version = '1.12.2'
+    mappings = 'snapshot_20171007'
+    makeObfSourceJar = false
 }
 
 jar {
