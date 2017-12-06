@@ -49,7 +49,7 @@ public class HidePlayers {
     public void showPlayerFor(Player player) {
         if (players.remove(player)) {
             EntityPlayerMP thePlayer = (EntityPlayerMP) player;
-            hub.getGame().getServer().getOnlinePlayers().stream().filter(p -> !p.equals(player)).forEach(p -> showPlayer(thePlayer, player));
+            hub.getGame().getServer().getOnlinePlayers().stream().filter(p -> !p.equals(player)).forEach(p -> showPlayer(thePlayer, p));
         }
     }
 
