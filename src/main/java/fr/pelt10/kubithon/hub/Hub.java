@@ -9,6 +9,9 @@ import fr.pelt10.kubithon.hub.dataregistry.DataManager;
 import fr.pelt10.kubithon.hub.gui.GuiManager;
 import fr.pelt10.kubithon.hub.gui.template.HubMenu;
 import fr.pelt10.kubithon.hub.gui.template.MainMenu;
+import fr.pelt10.kubithon.hub.listeners.CancelAction;
+import fr.pelt10.kubithon.hub.listeners.PlayerInteract;
+import fr.pelt10.kubithon.hub.listeners.PlayerJoin;
 import fr.pelt10.kubithon.hub.utils.HidePlayers;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -85,6 +88,10 @@ public class Hub {
 
         communicationManager = new CommunicationManager();
         communicationManager.registerMessage(new PlayerTeleportMessage(dataManager.getJedisUtils()));
+
+        new PlayerJoin(this);
+        new PlayerInteract(this);
+        new CancelAction(this);
     }
 
     @Listener
