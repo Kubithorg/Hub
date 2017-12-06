@@ -17,14 +17,18 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextStyles;
 
 public class PlayerJoin extends KubiListener {
+    private Hub hub;
 
     public PlayerJoin(Hub hub) {
         super(hub);
+        this.hub = hub;
     }
 
     @Listener
     public void PlayerJoinEvent(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
+
+        player.setLocation(hub.getDataManager().getSpawnLocation());
 
         Inventory inv = player.getInventory();
         inv.clear();

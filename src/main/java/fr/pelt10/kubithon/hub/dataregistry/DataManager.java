@@ -10,6 +10,8 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -36,6 +38,8 @@ public class DataManager {
     @Getter
     private List<ServerInstance> hubList = new ArrayList<>();
 
+    @Getter
+    private Location<World> spawnLocation;
 
     public DataManager(Hub hub, Path config) {
         this.hub = hub;
@@ -52,6 +56,14 @@ public class DataManager {
         loader = HoconConfigurationLoader.builder().setPath(config).build();
         try {
             rootNode = loader.load(ConfigurationOptions.defaults());
+
+            logger.info("Get Spawn Location");
+
+            ConfigurationNode spawnLocationNode = rootNode.getNode("spawnLocation");
+            spawnLocation = new Location<>(hub.getGame().getServer().getWorld(spawnLocationNode.getNode("world").getString()).get(),
+                    spawnLocationNode.getNode("x").getInt(),
+                    spawnLocationNode.getNode("y").getInt(),
+                    spawnLocationNode.getNode("z").getInt());
 
             logger.info("Starting RedisPool System");
             ConfigurationNode redisNode = rootNode.getNode("redis");
