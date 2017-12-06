@@ -46,7 +46,13 @@ public class HubMenu extends InventoryGUI {
 
     @Override
     public Inventory getInventory() {
-        Inventory inv = getDefaultInventory(9, 6);
+        double heightD = hubPlugin.getDataManager().getHubList().size()/9.0f;
+        int height = (int)heightD;
+
+        if(heightD - height > 0)
+            height++;
+
+        Inventory inv = getDefaultInventory(9, height);
 
         int i = 1;
         for (ServerInstance hub : hubPlugin.getDataManager().getHubList()) {
