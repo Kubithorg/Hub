@@ -27,7 +27,9 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
 
+import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.Set;
 
 @Singleton
 @Plugin(id = "kubithonhub", name = "KubithonHub", version = "1.0-SNAPSHOT", authors = "Pelt10", description = "Plugin de Gestion du Hub pour le projet Kubithon", url = "https://kubithon.org/")
@@ -78,6 +80,21 @@ public class Hub {
      */
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
+        //Dirty hack to remove "org.apache." from blacklist, thx Forge
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+            Class clazz = classLoader.getClass();
+            Field field = clazz.getDeclaredField("classLoaderExceptions");
+            field.setAccessible(true);
+
+            Set<String> classLoaderExceptions = (Set<String>) field.get(classLoader);
+            classLoaderExceptions.remove("org.apache.");
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         //World setup
         game.getServer().getWorlds().stream().map(World::getProperties).forEach(properties -> {
             properties.setGameRule(DefaultGameRules.DO_DAYLIGHT_CYCLE, "false");
