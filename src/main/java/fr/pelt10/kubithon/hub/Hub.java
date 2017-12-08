@@ -26,6 +26,8 @@ import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
+import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.weather.Weathers;
 
 import java.nio.file.Path;
 
@@ -79,9 +81,12 @@ public class Hub {
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         //World setup
-        game.getServer().getWorlds().stream().map(World::getProperties).forEach(properties -> {
-            properties.setGameRule(DefaultGameRules.DO_DAYLIGHT_CYCLE, "false");
-            properties.setWorldTime(6000);
+        game.getServer().getWorlds().stream().forEach(world -> {
+            WorldProperties worldProperties = world.getProperties();
+            worldProperties.setGameRule(DefaultGameRules.DO_DAYLIGHT_CYCLE, "false");
+            worldProperties.setWorldTime(6000);
+
+            world.setWeather(Weathers.CLEAR, Long.MAX_VALUE);
         });
 
         dataManager = new DataManager(this, config);
