@@ -17,6 +17,7 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -120,7 +121,7 @@ public class Hub {
         Task.builder().interval(10, TimeUnit.SECONDS).execute(() -> {
             getGame().getServer().getOnlinePlayers().forEach(player -> {
                 player.getFoodData().foodLevel().set(20);
-                player.getFoodData().saturation().set(20);
+                player.getFoodData().saturation().set(20.0D);
             });
         }).submit(this);
     }
