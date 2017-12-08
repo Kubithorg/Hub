@@ -1,12 +1,13 @@
 package fr.pelt10.kubithon.hub.listeners;
 
 import fr.pelt10.kubithon.hub.Hub;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketHeldItemChange;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameMode;
+import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.item.ItemTypes;
@@ -28,14 +29,17 @@ public class PlayerJoin extends KubiListener {
     public void PlayerJoinEvent(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
 
+        player.getGameModeData().type().set(GameModes.ADVENTURE);
         player.setLocation(hub.getDataManager().getSpawnLocation());
 
         Inventory inv = player.getInventory();
         inv.clear();
         setupPlayerInv(inv);
 
+        player.setChestplate(ItemStack.builder().itemType(ItemTypes.ELYTRA).build());
+
         //Change Held ItemSlot
-        EntityPlayerMP thePlayer = (EntityPlayerMP)player;
+        EntityPlayerMP thePlayer = (EntityPlayerMP) player;
         thePlayer.connection.sendPacket(new SPacketHeldItemChange(4));
     }
 
@@ -52,8 +56,13 @@ public class PlayerJoin extends KubiListener {
 
         //Cosmetic ItemStack
         ItemStack cosmeticItemStack = ItemStack.builder().itemType(ItemTypes.CHEST).build();
-        cosmeticItemStack.offer(Keys.DISPLAY_NAME, Text.builder("Cosmetiques").style(TextStyles.NONE).build());
+        cosmeticItemStack.offer(Keys.DISPLAY_NAME, Text.builder("Cosmétiques").style(TextStyles.NONE).build());
 
+        //Firework
+        ItemStack fireworkItemStack = ItemStack.builder().itemType(ItemTypes.FIREWORKS).build();
+        fireworkItemStack.offer(Keys.DISPLAY_NAME, Text.builder("Décollage immédiat !").style(TextStyles.NONE).build());
+
+        inv.query(new SlotIndex(2)).offer(fireworkItemStack);
         inv.query(new SlotIndex(3)).offer(hubItemStack);
         inv.query(new SlotIndex(5)).offer(hidePlayerItemStack);
         inv.query(new SlotIndex(6)).offer(cosmeticItemStack);
