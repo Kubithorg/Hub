@@ -29,7 +29,7 @@ public class BalloonCosmetic extends AbstractCosmetic {
     public void spawn() {
         baloon = getPlayer().getLocation().createEntity(entityType);
         EntityCreature theBaloon = (EntityCreature) baloon;
-        theBaloon.setLeashHolder((net.minecraft.entity.Entity) getPlayer(), false);
+        theBaloon.setLeashHolder((net.minecraft.entity.Entity) getPlayer(), true);
 
         InvulnerabilityData invulnerabilityData = baloon.getOrCreate(InvulnerabilityData.class).get();
         invulnerabilityData.set(Keys.INVULNERABLE, Boolean.valueOf(true));
