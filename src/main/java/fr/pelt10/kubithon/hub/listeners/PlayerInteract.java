@@ -63,9 +63,10 @@ public class PlayerInteract extends KubiListener {
             player.sendMessage(Text.of("Not Implemented"));
         } else if (itemStack.getType().equals(ItemTypes.FIREWORKS)) {
             event.setCancelled(false);
-            Task.builder().delay(3, TimeUnit.SECONDS).execute(() -> {
+            Task.builder().delay(1, TimeUnit.SECONDS).execute(() -> {
                 ItemStack itemStackInst = itemStack.createStack();
                 itemStackInst.setQuantity(1);
+                player.getInventory().query(new SlotIndex(2)).clear();
                 player.getInventory().query(new SlotIndex(2)).offer(itemStackInst);
             }).submit(hub);
         }
