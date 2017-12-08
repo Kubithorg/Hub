@@ -31,9 +31,7 @@ public class PlayerJoin extends KubiListener {
     public void PlayerJoinEvent(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
 
-        GameModeData gameModeData = player.getGameModeData();
-        gameModeData.type().set(GameModes.ADVENTURE);
-        player.offer(gameModeData);
+        player.offer(Keys.GAME_MODE, GameModes.ADVENTURE);
 
         player.getFoodData().saturation().set(20.0D);
         player.getFoodData().foodLevel().set(20);
