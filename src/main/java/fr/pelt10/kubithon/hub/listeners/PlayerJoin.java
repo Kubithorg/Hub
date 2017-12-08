@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketHeldItemChange;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -30,13 +31,18 @@ public class PlayerJoin extends KubiListener {
         Player player = event.getTargetEntity();
 
         player.getGameModeData().type().set(GameModes.ADVENTURE);
+        player.getFoodData().saturation().set(20.0D);
+        player.getFoodData().foodLevel().set(20);
         player.setLocation(hub.getDataManager().getSpawnLocation());
 
         Inventory inv = player.getInventory();
         inv.clear();
         setupPlayerInv(inv);
 
-        player.setChestplate(ItemStack.builder().itemType(ItemTypes.ELYTRA).build());
+        ItemStack elytra = ItemStack.builder().itemType(ItemTypes.ELYTRA).build();
+        elytra.offer(Keys.UNBREAKABLE, true);
+
+        player.setChestplate(elytra);
 
         //Change Held ItemSlot
         EntityPlayerMP thePlayer = (EntityPlayerMP) player;
