@@ -17,7 +17,7 @@ public class PlayerMove extends KubiListener {
     @Listener
     public void playerMoveEvent(MoveEntityEvent event) {
         Entity entity = event.getTargetEntity();
-        if (entity instanceof Player && entity.getLocation().getY() <= 0) {
+        if (entity instanceof Player && entity.getLocation().getY() <= 10) {
             ((Player)entity).setLocation(hub.getDataManager().getSpawnLocation());
         }
     }

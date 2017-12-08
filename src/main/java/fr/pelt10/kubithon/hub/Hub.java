@@ -118,7 +118,7 @@ public class Hub {
         new PlayerJoin(this);
         new PlayerInteract(this);
         new CancelAction(this);
-        new PlayerMove(this);
+        //new PlayerMove(this);
 
         Task.builder().interval(10, TimeUnit.SECONDS).execute(() -> {
             getGame().getServer().getOnlinePlayers().forEach(player -> {
