@@ -4,6 +4,7 @@ import fr.pelt10.kubithon.hub.Hub;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketHeldItemChange;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.entity.GameModeData;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
@@ -30,7 +31,10 @@ public class PlayerJoin extends KubiListener {
     public void PlayerJoinEvent(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
 
-        player.getGameModeData().type().set(GameModes.ADVENTURE);
+        GameModeData gameModeData = player.getGameModeData();
+        gameModeData.type().set(GameModes.ADVENTURE);
+        player.offer(gameModeData);
+
         player.getFoodData().saturation().set(20.0D);
         player.getFoodData().foodLevel().set(20);
         player.setLocation(hub.getDataManager().getSpawnLocation());
