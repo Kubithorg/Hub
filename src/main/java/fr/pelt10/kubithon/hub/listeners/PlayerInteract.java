@@ -34,10 +34,9 @@ public class PlayerInteract extends KubiListener {
 
         Player player = event.getCause().first(Player.class).get();
 
-        if (player.hasPermission("kubithon.hub.inventoryfree"))
-            return;
+        if (!player.hasPermission("kubithon.hub.inventoryfree"))
+            event.setCancelled(true);
 
-        event.setCancelled(true);
         ItemStackSnapshot itemStack = event.getItemStack();
 
         if (itemStack.getType().equals(ItemTypes.END_PORTAL_FRAME)) {
