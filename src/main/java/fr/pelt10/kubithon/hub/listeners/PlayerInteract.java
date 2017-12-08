@@ -66,7 +66,7 @@ public class PlayerInteract extends KubiListener {
             Task.builder().delay(1, TimeUnit.SECONDS).execute(() -> {
                 ItemStack itemStackInst = itemStack.createStack();
                 itemStackInst.setQuantity(1);
-                player.getInventory().query(new SlotIndex(2)).clear();
+                player.getInventory().query(new SlotIndex(2)).offer(ItemStack.builder().itemType(ItemTypes.AIR).build());
                 player.getInventory().query(new SlotIndex(2)).offer(itemStackInst);
             }).submit(hub);
         }
