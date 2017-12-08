@@ -108,6 +108,15 @@ public class Hub {
             worldProperties.setWorldTime(6000);
 
             world.setWeather(Weathers.CLEAR, Long.MAX_VALUE);
+
+            //DirtyHack to keep chunk load
+            for (int x = -500; x < 500; x+=16) {
+                for (int y = 0; y < 256; y+=16) {
+                    for (int z = -500; z < 500; z+=16) {
+                        world.getChunkAtBlock(x,y,z).ifPresent(chunk -> chunk.loadChunk(true));
+                    }
+                }
+            }
         });
 
         dataManager = new DataManager(this, config);
