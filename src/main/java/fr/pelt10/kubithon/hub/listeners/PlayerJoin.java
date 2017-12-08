@@ -29,6 +29,7 @@ public class PlayerJoin extends KubiListener {
 
     @Listener
     public void PlayerJoinEvent(ClientConnectionEvent.Join event) {
+        event.setMessageCancelled(true);
         Player player = event.getTargetEntity();
 
         player.offer(Keys.GAME_MODE, GameModes.ADVENTURE);
