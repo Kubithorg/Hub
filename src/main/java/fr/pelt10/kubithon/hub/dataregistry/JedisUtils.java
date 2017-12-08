@@ -21,7 +21,7 @@ public class JedisUtils {
     }
 
     public void execute(Consumer<Jedis> consumer) {
-        try(Jedis jedis = jedisPool.getResource()) {
+        try (Jedis jedis = jedisPool.getResource()) {
             consumer.accept(jedis);
         }
     }
