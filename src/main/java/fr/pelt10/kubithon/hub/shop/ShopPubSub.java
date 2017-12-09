@@ -21,9 +21,11 @@ public class ShopPubSub extends JedisPubSub {
     public ShopPubSub(Hub hub) {
         this.hub = hub;
         hub.getDataManager().getJedisUtils().execute(jedis -> {
-            while (run) {
-                jedis.subscribe(this, RedisKeys.SHOP_LOGIN_PUBSUB);
-            }
+            new Thread(() -> {
+                while (run) {
+                    jedis.subscribe(this, RedisKeys.SHOP_LOGIN_PUBSUB);
+                }
+            }).start();
         });
     }
 
