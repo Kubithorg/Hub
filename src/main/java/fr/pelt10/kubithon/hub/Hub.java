@@ -7,8 +7,7 @@ import fr.pelt10.kubithon.hub.com.CommunicationManager;
 import fr.pelt10.kubithon.hub.com.messages.PlayerTeleportMessage;
 import fr.pelt10.kubithon.hub.dataregistry.DataManager;
 import fr.pelt10.kubithon.hub.gui.GuiManager;
-import fr.pelt10.kubithon.hub.gui.template.HubMenu;
-import fr.pelt10.kubithon.hub.gui.template.MainMenu;
+import fr.pelt10.kubithon.hub.gui.template.*;
 import fr.pelt10.kubithon.hub.listeners.CancelAction;
 import fr.pelt10.kubithon.hub.listeners.PlayerInteract;
 import fr.pelt10.kubithon.hub.listeners.PlayerJoin;
@@ -130,8 +129,12 @@ public class Hub {
         eventManager.registerListeners(this, new GuiManager(this));
 
         guiManager = new GuiManager(this);
-        new MainMenu(this);
+        new BallonMenu(this);
+        new ClotheMenu(this);
+        new CosmeticsMenu(this);
         new HubMenu(this);
+        new MainMenu(this);
+        new PetMenu(this);
 
         hidePlayers = new HidePlayers(this);
     }
