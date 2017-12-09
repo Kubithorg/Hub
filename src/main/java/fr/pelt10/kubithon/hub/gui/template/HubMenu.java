@@ -23,11 +23,11 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class HubMenu extends InventoryGUI {
-    private Hub hubPlugin;
+    private Hub hub;
 
     public HubMenu(Hub hub) {
         super(hub);
-        this.hubPlugin = hub;
+        this.hub = hub;
     }
 
     @Override
@@ -36,20 +36,20 @@ public class HubMenu extends InventoryGUI {
         Task.builder().execute(() ->
                 event.getTransactions().stream().filter(slotTransaction -> slotTransaction.getOriginal().getType().equals(ItemTypes.BEACON)).forEach(slotTransaction -> {
                     UUID uuid = event.getCause().first(Player.class).get().getUniqueId();
-                    ServerInstance server = hubPlugin.getDataManager().getHub(slotTransaction.getOriginal().get(Keys.ITEM_LORE).get().get(0).toPlainSingle()).get();
-                    if (!hubPlugin.getDataManager().getHubInstance().getHubID().equals(server.getHubID())) {
+                    ServerInstance server = hub.getDataManager().getHub(slotTransaction.getOriginal().get(Keys.ITEM_LORE).get().get(0).toPlainSingle()).get();
+                    if (!hub.getDataManager().getHubInstance().getHubID().equals(server.getHubID())) {
                         Object[] data = {uuid, server};
-                        hubPlugin.getCommunicationManager().sendMessage(PlayerTeleportMessage.class, data);
+                        hub.getCommunicationManager().sendMessage(PlayerTeleportMessage.class, data);
                     }
                 })
-        );
+        ).submit(hub);
 
         event.setCancelled(true);
     }
 
     @Override
     public Inventory getInventory() {
-        double heightD = hubPlugin.getDataManager().getHubList().size() / 9.0f;
+        double heightD = hub.getDataManager().getHubList().size() / 9.0f;
         int height = (int) heightD;
 
         if (heightD - height > 0)
@@ -58,12 +58,12 @@ public class HubMenu extends InventoryGUI {
         Inventory inv = getDefaultInventory(9, height);
 
         int i = 1;
-        for (ServerInstance hub : hubPlugin.getDataManager().getHubList()) {
+        for (ServerInstance hub : hub.getDataManager().getHubList()) {
             ItemStack itemStack = ItemStack.builder().itemType(ItemTypes.BEACON).build();
             itemStack.offer(Keys.ITEM_LORE, Arrays.asList(Text.builder(hub.getHubID()).color(TextColors.GRAY).style(TextStyles.ITALIC).build()));
             itemStack.offer(Keys.DISPLAY_NAME, Text.builder("Hub " + i).style(TextStyles.NONE).build());
 
-            if (this.hubPlugin.getDataManager().getHubInstance().getHubID().equals(hub.getHubID())) {
+            if (this.hub.getDataManager().getHubInstance().getHubID().equals(hub.getHubID())) {
                 EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
                 enchantmentData.set(enchantmentData.enchantments().add(Enchantment.builder().type(EnchantmentTypes.SHARPNESS).level(1).build()));
                 itemStack.offer(enchantmentData);
