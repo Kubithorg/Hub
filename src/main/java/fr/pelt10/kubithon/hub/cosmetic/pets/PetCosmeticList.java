@@ -1,6 +1,7 @@
 package fr.pelt10.kubithon.hub.cosmetic.pets;
 
 import fr.pelt10.kubithon.hub.cosmetic.CosmeticList;
+import lombok.Getter;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,34 +16,38 @@ import org.spongepowered.api.entity.living.player.Player;
 import java.util.function.BiConsumer;
 
 public enum PetCosmeticList implements CosmeticList {
-    HORSE_SKELETON(EntityTypes.SKELETON_HORSE),
-    HORSE_ZOMBIE(EntityTypes.ZOMBIE_HORSE),
-    HORSE_BROWN(EntityTypes.HORSE, (entity, player) -> setupHorse(entity, player, 1)),
-    HORSE_WHITE(EntityTypes.HORSE, (entity, player) -> setupHorse(entity, player, 0)),
-    SHEEP_ORANGE(EntityTypes.SHEEP, (entity, player) -> setupSheep(entity, player, EnumDyeColor.ORANGE)),
-    SHEEP_PURPLE(EntityTypes.SHEEP, (entity, player) -> setupSheep(entity, player, EnumDyeColor.PURPLE)),
-    SHEEP_PINK(EntityTypes.SHEEP, (entity, player) -> setupSheep(entity, player, EnumDyeColor.PINK)),
-    SHEEP_RED(EntityTypes.SHEEP, (entity, player) -> setupSheep(entity, player, EnumDyeColor.RED)),
-    SHEEP_BLACK(EntityTypes.SHEEP, (entity, player) -> setupSheep(entity, player, EnumDyeColor.BLACK)),
-    SHEEP_YELLOW(EntityTypes.SHEEP, (entity, player) -> setupSheep(entity, player, EnumDyeColor.YELLOW)),
-    MAGMACUBE(EntityTypes.MAGMA_CUBE, (entity, player) -> ((MagmaCube) entity).slimeSize().set(0)),
-    SLIME(EntityTypes.SLIME, (entity, player) -> ((Slime) entity).slimeSize().set(0)),
-    CHICKEN(EntityTypes.CHICKEN),
-    WOLF(EntityTypes.WOLF),
-    COW(EntityTypes.COW),
-    COW_MUSHROOM(EntityTypes.MUSHROOM_COW),
-    PIG(EntityTypes.PIG),
-    RABBIT(EntityTypes.RABBIT),
-    IRONGOLEM(EntityTypes.IRON_GOLEM),
-    ENDERMAN(EntityTypes.ENDERMAN),
-    VILLAGER(EntityTypes.VILLAGER);
+    HORSE_SKELETON(EntityTypes.SKELETON_HORSE, "Cheval Squelette"),
+    HORSE_ZOMBIE(EntityTypes.ZOMBIE_HORSE, "Cheval Zombie"),
+    HORSE_BROWN(EntityTypes.HORSE,"Cheval Marron", (entity, player) -> setupHorse(entity, player, 1)),
+    HORSE_WHITE(EntityTypes.HORSE,"Cheval Blanc", (entity, player) -> setupHorse(entity, player, 0)),
+    SHEEP_ORANGE(EntityTypes.SHEEP,"Mouton Orange", (entity, player) -> setupSheep(entity, player, EnumDyeColor.ORANGE)),
+    SHEEP_PURPLE(EntityTypes.SHEEP,"Mouton Violet", (entity, player) -> setupSheep(entity, player, EnumDyeColor.PURPLE)),
+    SHEEP_PINK(EntityTypes.SHEEP,"Mouton Rose", (entity, player) -> setupSheep(entity, player, EnumDyeColor.PINK)),
+    SHEEP_RED(EntityTypes.SHEEP,"Mouton Rouge", (entity, player) -> setupSheep(entity, player, EnumDyeColor.RED)),
+    SHEEP_BLACK(EntityTypes.SHEEP,"Mouton Noir", (entity, player) -> setupSheep(entity, player, EnumDyeColor.BLACK)),
+    SHEEP_YELLOW(EntityTypes.SHEEP,"Mouton Jaune", (entity, player) -> setupSheep(entity, player, EnumDyeColor.YELLOW)),
+    MAGMACUBE(EntityTypes.MAGMA_CUBE,"MagmaCube", (entity, player) -> ((MagmaCube) entity).slimeSize().set(0)),
+    SLIME(EntityTypes.SLIME,"Slime", (entity, player) -> ((Slime) entity).slimeSize().set(0)),
+    CHICKEN(EntityTypes.CHICKEN,"Poulet"),
+    WOLF(EntityTypes.WOLF, "Chien"),
+    COW(EntityTypes.COW, "Vache"),
+    COW_MUSHROOM(EntityTypes.MUSHROOM_COW, "Vache Champignon"),
+    PIG(EntityTypes.PIG, "Cochon"),
+    RABBIT(EntityTypes.RABBIT, "Lapin"),
+    IRONGOLEM(EntityTypes.IRON_GOLEM, "Golem de fer"),
+    ENDERMAN(EntityTypes.ENDERMAN, "EnderMan"),
+    VILLAGER(EntityTypes.VILLAGER, "Villageois");
 
     private EntityType entityType;
     private BiConsumer<Entity, Player>[] biConsumers;
 
-    private PetCosmeticList(EntityType entityType, BiConsumer<Entity, Player>... biConsumer) {
+    @Getter
+    private String name;
+
+    private PetCosmeticList(EntityType entityType, String name, BiConsumer<Entity, Player>... biConsumer) {
         this.entityType = entityType;
         this.biConsumers = biConsumer;
+        this.name = name;
     }
 
     private static void setupHorse(Entity entity, Player player, int color) {
