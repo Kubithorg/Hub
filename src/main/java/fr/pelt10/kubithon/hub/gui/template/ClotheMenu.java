@@ -1,7 +1,6 @@
 package fr.pelt10.kubithon.hub.gui.template;
 
 import fr.pelt10.kubithon.hub.Hub;
-import fr.pelt10.kubithon.hub.cosmetic.balloons.BallonList;
 import fr.pelt10.kubithon.hub.cosmetic.cothes.ClotheList;
 import fr.pelt10.kubithon.hub.gui.InventoryGUI;
 import org.spongepowered.api.data.key.Keys;

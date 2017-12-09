@@ -20,12 +20,12 @@ public enum PetCosmeticList implements CosmeticList {
     HORSE_ZOMBIE(EntityTypes.ZOMBIE_HORSE, "Cheval Zombie"),
     HORSE_BROWN(EntityTypes.HORSE,"Cheval Marron", (entity, player) -> setupHorse(entity, player, 1)),
     HORSE_WHITE(EntityTypes.HORSE,"Cheval Blanc", (entity, player) -> setupHorse(entity, player, 0)),
-    SHEEP_ORANGE(EntityTypes.SHEEP,"Mouton Orange", (entity, player) -> setupSheep(entity, player, EnumDyeColor.ORANGE)),
-    SHEEP_PURPLE(EntityTypes.SHEEP,"Mouton Violet", (entity, player) -> setupSheep(entity, player, EnumDyeColor.PURPLE)),
-    SHEEP_PINK(EntityTypes.SHEEP,"Mouton Rose", (entity, player) -> setupSheep(entity, player, EnumDyeColor.PINK)),
-    SHEEP_RED(EntityTypes.SHEEP,"Mouton Rouge", (entity, player) -> setupSheep(entity, player, EnumDyeColor.RED)),
-    SHEEP_BLACK(EntityTypes.SHEEP,"Mouton Noir", (entity, player) -> setupSheep(entity, player, EnumDyeColor.BLACK)),
-    SHEEP_YELLOW(EntityTypes.SHEEP,"Mouton Jaune", (entity, player) -> setupSheep(entity, player, EnumDyeColor.YELLOW)),
+    SHEEP_ORANGE(EntityTypes.SHEEP,"Mouton Orange", (entity, player) -> setupSheep(entity, EnumDyeColor.ORANGE)),
+    SHEEP_PURPLE(EntityTypes.SHEEP,"Mouton Violet", (entity, player) -> setupSheep(entity, EnumDyeColor.PURPLE)),
+    SHEEP_PINK(EntityTypes.SHEEP,"Mouton Rose", (entity, player) -> setupSheep(entity, EnumDyeColor.PINK)),
+    SHEEP_RED(EntityTypes.SHEEP,"Mouton Rouge", (entity, player) -> setupSheep(entity, EnumDyeColor.RED)),
+    SHEEP_BLACK(EntityTypes.SHEEP,"Mouton Noir", (entity, player) -> setupSheep(entity, EnumDyeColor.BLACK)),
+    SHEEP_YELLOW(EntityTypes.SHEEP,"Mouton Jaune", (entity, player) -> setupSheep(entity, EnumDyeColor.YELLOW)),
     MAGMACUBE(EntityTypes.MAGMA_CUBE,"MagmaCube", (entity, player) -> ((MagmaCube) entity).slimeSize().set(0)),
     SLIME(EntityTypes.SLIME,"Slime", (entity, player) -> ((Slime) entity).slimeSize().set(0)),
     CHICKEN(EntityTypes.CHICKEN,"Poulet"),
@@ -56,7 +56,7 @@ public enum PetCosmeticList implements CosmeticList {
         horse.setTamedBy((EntityPlayer) player);
     }
 
-    private static void setupSheep(Entity entity, Player player, EnumDyeColor color) {
+    private static void setupSheep(Entity entity, EnumDyeColor color) {
         EntitySheep sheep = (EntitySheep) entity;
         sheep.setFleeceColor(color);
         sheep.setGrowingAge(Integer.MIN_VALUE);

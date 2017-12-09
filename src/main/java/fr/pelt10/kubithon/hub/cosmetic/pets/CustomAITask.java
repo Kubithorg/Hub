@@ -22,9 +22,7 @@ public class CustomAITask extends AbstractAITask<Creature> {
     }
 
     public void update() {
-        getOwner().ifPresent(agent -> {
-            agent.setTarget(player);
-        });
+        getOwner().ifPresent(agent -> agent.setTarget(player));
     }
 
     public boolean continueUpdating() {

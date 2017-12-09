@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class GuiManager {
-    private static List<InventoryGUI> gui = new ArrayList<>();
+    private static List<InventoryGUI> guiList = new ArrayList<>();
     private Logger logger;
     private Hub hub;
 
@@ -29,17 +29,17 @@ public class GuiManager {
         }
         Inventory inventory = event.getTargetInventory();
 
-        gui.stream().filter(inv -> inv.getDisplayName().equalsIgnoreCase(inventory.getName().get())).forEach(inv -> inv.onAction(event));
+        guiList.stream().filter(inv -> inv.getDisplayName().equalsIgnoreCase(inventory.getName().get())).forEach(inv -> inv.onAction(event));
     }
 
     public void registerGUI(InventoryGUI gui) {
-        if (this.gui.stream().anyMatch(g -> g.getClass().getName().equals(gui.getClass().getName()))) {
+        if (this.guiList.stream().anyMatch(g -> g.getClass().getName().equals(gui.getClass().getName()))) {
             throw new IllegalArgumentException("GUI already registered");
         }
-        this.gui.add(gui);
+        this.guiList.add(gui);
     }
 
     public <T extends InventoryGUI> Optional<InventoryGUI> getGUI(Class<T> clazz) {
-        return gui.stream().filter(g -> g.getClass().getName().equals(clazz.getName())).findFirst();
+        return guiList.stream().filter(g -> g.getClass().getName().equals(clazz.getName())).findFirst();
     }
 }

@@ -3,9 +3,7 @@ package fr.pelt10.kubithon.hub.cosmetic.cothes;
 import fr.pelt10.kubithon.hub.cosmetic.AbstractCosmetic;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.InventoryProperty;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.property.SlotIndex;
 
 import java.util.function.BiConsumer;
 
@@ -27,7 +25,7 @@ public class ClotheCosmetic extends AbstractCosmetic {
         armorSlot.equip(getPlayer(), ItemStack.builder().itemType(ItemTypes.AIR).build());
     }
 
-    public static enum ArmorSlot {
+    public enum ArmorSlot {
         HELMET((itemStack, player) -> player.setHelmet(itemStack)),
         CHESTPLATE((itemStack, player) -> player.setChestplate(itemStack)),
         LEGGINGS((itemStack, player) -> player.setLeggings(itemStack)),

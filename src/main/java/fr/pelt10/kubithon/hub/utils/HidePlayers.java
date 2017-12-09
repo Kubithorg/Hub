@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HidePlayers {
-    private final String PERMISSION = "kubithon.hub.displayplayer";
+    private static final String PERMISSION = "kubithon.hub.displayplayer";
     @Getter
     private List<Player> players = new ArrayList<>();
     private Hub hub;
@@ -37,9 +37,7 @@ public class HidePlayers {
 
         EntityPlayerMP thePlayer = (EntityPlayerMP) player;
 
-        hub.getGame().getServer().getOnlinePlayers().stream().filter(p -> !p.hasPermission(PERMISSION)).forEach(p -> {
-            hidePlayer(thePlayer, p);
-        });
+        hub.getGame().getServer().getOnlinePlayers().stream().filter(p -> !p.hasPermission(PERMISSION)).forEach(p -> hidePlayer(thePlayer, p));
     }
 
     private void hidePlayer(EntityPlayerMP player, Player hide) {

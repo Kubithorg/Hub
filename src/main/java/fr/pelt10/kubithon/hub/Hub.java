@@ -20,7 +20,6 @@ import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -65,17 +64,6 @@ public class Hub {
     }
 
     /**
-     * During this state, the plugin gets setup for initialization.
-     * Access to a default logger instance and access to information regarding preferred configuration file locations is available.
-     *
-     * @param event
-     */
-    @Listener
-    public void onGamePreInitialization(GamePreInitializationEvent event) {
-
-    }
-
-    /**
      * The server instance exists, and worlds are loaded.
      * It's time to setup world!
      *
@@ -107,10 +95,10 @@ public class Hub {
             world.setWeather(Weathers.CLEAR, Long.MAX_VALUE);
 
             //DirtyHack to keep chunk load
-            for (int x = -500; x < 500; x+=16) {
-                for (int y = 0; y < 256; y+=16) {
-                    for (int z = -500; z < 500; z+=16) {
-                        world.getChunkAtBlock(x,y,z).ifPresent(chunk -> chunk.loadChunk(true));
+            for (int x = -500; x < 500; x += 16) {
+                for (int y = 0; y < 256; y += 16) {
+                    for (int z = -500; z < 500; z += 16) {
+                        world.getChunkAtBlock(x, y, z).ifPresent(chunk -> chunk.loadChunk(true));
                     }
                 }
             }
@@ -126,12 +114,11 @@ public class Hub {
         new CancelAction(this);
         //new PlayerMove(this);
 
-        Task.builder().interval(10, TimeUnit.SECONDS).execute(() -> {
-            getGame().getServer().getOnlinePlayers().forEach(player -> {
-                player.getFoodData().foodLevel().set(20);
-                player.getFoodData().saturation().set(20.0D);
-            });
-        }).submit(this);
+        Task.builder().interval(10, TimeUnit.SECONDS).execute(() ->
+                getGame().getServer().getOnlinePlayers().forEach(player -> {
+                    player.getFoodData().foodLevel().set(20);
+                    player.getFoodData().saturation().set(20.0D);
+                })).submit(this);
     }
 
     @Listener
