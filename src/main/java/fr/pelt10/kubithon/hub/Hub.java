@@ -12,6 +12,7 @@ import fr.pelt10.kubithon.hub.listeners.CancelAction;
 import fr.pelt10.kubithon.hub.listeners.PlayerInteract;
 import fr.pelt10.kubithon.hub.listeners.PlayerJoin;
 import fr.pelt10.kubithon.hub.listeners.PlayerMove;
+import fr.pelt10.kubithon.hub.shop.ShopManager;
 import fr.pelt10.kubithon.hub.utils.HidePlayers;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -114,6 +115,8 @@ public class Hub {
         new PlayerInteract(this);
         new CancelAction(this);
         //new PlayerMove(this);
+
+        new ShopManager(this);
 
         Task.builder().interval(10, TimeUnit.SECONDS).execute(() ->
                 getGame().getServer().getOnlinePlayers().forEach(player -> {

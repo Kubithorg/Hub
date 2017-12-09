@@ -12,4 +12,8 @@ public class RedisKeys {
 
     public static final String COMM_PUBSUB_CHANNEL = "COMM_PUBSUB";
     public static final String COMM_PLAYER_TP = "PLAYER_TP";
+
+    public static final int SHOP_DB_ID = 0;
+    public static final String SHOP_COMMAND = "shop";
+    public static final String SHOP_LOGIN_PUBSUB = "login";
 }
