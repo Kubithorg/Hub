@@ -10,8 +10,8 @@ public enum BallonList implements CosmeticList {
     COW(EntityTypes.COW, "Vache"),
     PIG(EntityTypes.PIG, "Cochon"),
     SHEEP(EntityTypes.SHEEP, "Mouton"),
-    SHEEP_JEB(EntityTypes.SHEEP, "jeb_", "Mouton Retourné"),
-    SHEEP_GRUMM(EntityTypes.SHEEP, "Grumm", "Mouton Multicolore"),
+    SHEEP_JEB(EntityTypes.SHEEP, "jeb_", "Mouton Multicolore"),
+    SHEEP_GRUMM(EntityTypes.SHEEP, "Grumm", "Mouton Retourné"),
     MUSHROOM_COW(EntityTypes.MUSHROOM_COW, "Vache Champignon");
 
     private EntityType entityType;
