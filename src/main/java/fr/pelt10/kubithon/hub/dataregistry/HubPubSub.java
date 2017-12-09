@@ -2,12 +2,7 @@ package fr.pelt10.kubithon.hub.dataregistry;
 
 import fr.pelt10.kubithon.hub.utils.ServerInstance;
 import org.slf4j.Logger;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class HubPubSub extends JedisPubSub implements Runnable {
     private JedisUtils jedisUtils;

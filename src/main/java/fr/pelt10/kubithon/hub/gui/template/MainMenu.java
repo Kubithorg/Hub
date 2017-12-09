@@ -5,7 +5,6 @@ import fr.pelt10.kubithon.hub.gui.InventoryGUI;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.text.Text;
 
 public class MainMenu extends InventoryGUI {
     private Hub hub;

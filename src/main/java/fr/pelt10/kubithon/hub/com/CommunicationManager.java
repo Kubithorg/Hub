@@ -11,7 +11,7 @@ public class CommunicationManager {
     }
 
     public void registerMessage(CommunicationMessage message) {
-        if(messages.stream().map(CommunicationMessage::getClass).anyMatch(name -> name.equals(message.getClass()))) {
+        if (messages.stream().map(CommunicationMessage::getClass).anyMatch(name -> name.equals(message.getClass()))) {
             throw new UnsupportedOperationException(message.getClass().getCanonicalName() + " is already register !");
         }
         messages.add(message);
