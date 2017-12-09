@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HidePlayers {
+    private final String PERMISSION = "kubithon.hub.displayplayer";
     @Getter
     private List<Player> players = new ArrayList<>();
     private Hub hub;
-    private final String PERMISSION = "kubithon.hub.displayplayer";
 
     public HidePlayers(Hub hub) {
         this.hub = hub;

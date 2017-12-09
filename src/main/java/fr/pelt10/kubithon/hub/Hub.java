@@ -12,11 +12,13 @@ import fr.pelt10.kubithon.hub.gui.template.MainMenu;
 import fr.pelt10.kubithon.hub.listeners.CancelAction;
 import fr.pelt10.kubithon.hub.listeners.PlayerInteract;
 import fr.pelt10.kubithon.hub.listeners.PlayerJoin;
+import fr.pelt10.kubithon.hub.listeners.PlayerMove;
 import fr.pelt10.kubithon.hub.utils.HidePlayers;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -24,8 +26,11 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gamerule.DefaultGameRules;
+import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.weather.Weathers;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -96,9 +101,21 @@ public class Hub {
         }
 
         //World setup
-        game.getServer().getWorlds().stream().map(World::getProperties).forEach(properties -> {
-            properties.setGameRule(DefaultGameRules.DO_DAYLIGHT_CYCLE, "false");
-            properties.setWorldTime(6000);
+        game.getServer().getWorlds().stream().forEach(world -> {
+            WorldProperties worldProperties = world.getProperties();
+            worldProperties.setGameRule(DefaultGameRules.DO_DAYLIGHT_CYCLE, "false");
+            worldProperties.setWorldTime(6000);
+
+            world.setWeather(Weathers.CLEAR, Long.MAX_VALUE);
+
+            //DirtyHack to keep chunk load
+            for (int x = -500; x < 500; x+=16) {
+                for (int y = 0; y < 256; y+=16) {
+                    for (int z = -500; z < 500; z+=16) {
+                        world.getChunkAtBlock(x,y,z).ifPresent(chunk -> chunk.loadChunk(true));
+                    }
+                }
+            }
         });
 
         dataManager = new DataManager(this, config);
@@ -109,6 +126,14 @@ public class Hub {
         new PlayerJoin(this);
         new PlayerInteract(this);
         new CancelAction(this);
+        //new PlayerMove(this);
+
+        Task.builder().interval(10, TimeUnit.SECONDS).execute(() -> {
+            getGame().getServer().getOnlinePlayers().forEach(player -> {
+                player.getFoodData().foodLevel().set(20);
+                player.getFoodData().saturation().set(20.0D);
+            });
+        }).submit(this);
     }
 
     @Listener

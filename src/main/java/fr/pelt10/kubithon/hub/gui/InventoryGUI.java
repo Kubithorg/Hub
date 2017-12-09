@@ -11,15 +11,17 @@ import org.spongepowered.api.text.Text;
 public abstract class InventoryGUI {
     private Hub hub;
 
-    public abstract void onAction(ClickInventoryEvent event);
-	public abstract Inventory getInventory();
-	public abstract String getDisplayName();
-
-	@Inject
+    @Inject
     public InventoryGUI(Hub hub) {
         this.hub = hub;
         hub.getGuiManager().registerGUI(this);
     }
+
+    public abstract void onAction(ClickInventoryEvent event);
+
+    public abstract Inventory getInventory();
+
+    public abstract String getDisplayName();
 
     protected Inventory getDefaultInventory(int width, int height) {
         return Inventory.builder().of(
