@@ -10,6 +10,7 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.Arrays;
@@ -21,12 +22,17 @@ public class BallonMenu extends InventoryGUI {
 
     @Override
     public void onAction(ClickInventoryEvent event) {
+        Player player = event.getCause().first(Player.class).get();
         event.filter(itemStack -> itemStack.getType().equals(ItemTypes.WOOL)).forEach(slotTransaction ->
-            slotTransaction.getOriginal().createStack().get(Keys.DISPLAY_NAME).ifPresent(text ->
-                Arrays.stream(BallonList.values()).filter(ballon -> ballon.getName().equals(text.toPlainSingle())).forEach(ballon ->
-                        ballon.get(event.getCause().first(Player.class).get())
+                slotTransaction.getOriginal().createStack().get(Keys.DISPLAY_NAME).ifPresent(text ->
+                        Arrays.stream(BallonList.values()).filter(ballon -> ballon.getName().equals(text.toPlainSingle())).forEach(ballon -> {
+                            if (player.hasPermission("kubithon.cosmetic." + ballon.name().toLowerCase())) {
+                                ballon.get(event.getCause().first(Player.class).get());
+                            } else {
+                                player.sendMessage(Text.builder("Vous n'avez pas encore acheté : " + ballon.getName()).color(TextColors.RED).build());
+                            }
+                        })
                 )
-            )
         );
     }
 

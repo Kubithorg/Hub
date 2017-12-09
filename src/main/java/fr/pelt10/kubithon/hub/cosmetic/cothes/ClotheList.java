@@ -21,7 +21,9 @@ public enum ClotheList implements CosmeticList {
     }
 
     public ClotheCosmetic get(Player player) {
-        return new ClotheCosmetic(player, armorSlot, itemStack);
+        ClotheCosmetic clotheCosmetic = new ClotheCosmetic(player, armorSlot, itemStack);
+        clotheCosmetic.spawn();
+        return clotheCosmetic;
     }
 
 }

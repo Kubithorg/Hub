@@ -41,7 +41,7 @@ public class ShopPubSub extends JedisPubSub implements Runnable {
         hub.getGame().getServer().getPlayer(UUID.fromString(uuid)).ifPresent(player -> {
             try {
 
-                Text msg = Text.builder("\n\nPour autoriser la connexion cliquez ici.\n\n")
+                Text msg = Text.builder("\n\nPour autoriser la connexion au site, cliquez ici.\n\n")
                         .onClick(TextActions.openUrl(new URL(obj.get("url").getAsString())))
                         .color(TextColors.GOLD)
                         .style(TextStyles.BOLD)
@@ -58,5 +58,14 @@ public class ShopPubSub extends JedisPubSub implements Runnable {
     public void unsubscribe() {
         run = false;
         super.unsubscribe();
+    }
+
+    public static String addUUIDDashes(String idNoDashes) {
+        StringBuffer idBuff = new StringBuffer(idNoDashes);
+        idBuff.insert(20, '-');
+        idBuff.insert(16, '-');
+        idBuff.insert(12, '-');
+        idBuff.insert(8, '-');
+        return idBuff.toString();
     }
 }

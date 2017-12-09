@@ -33,6 +33,7 @@ public enum BallonList implements CosmeticList {
 
     public BalloonCosmetic get(Player player) {
         BalloonCosmetic balloon = new BalloonCosmetic(player, entityType);
+        balloon.spawn();
         if (!entityName.isEmpty()) {
             balloon.rename(entityName);
         }

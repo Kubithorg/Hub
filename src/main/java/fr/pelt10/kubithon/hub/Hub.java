@@ -8,10 +8,7 @@ import fr.pelt10.kubithon.hub.com.messages.PlayerTeleportMessage;
 import fr.pelt10.kubithon.hub.dataregistry.DataManager;
 import fr.pelt10.kubithon.hub.gui.GuiManager;
 import fr.pelt10.kubithon.hub.gui.template.*;
-import fr.pelt10.kubithon.hub.listeners.CancelAction;
-import fr.pelt10.kubithon.hub.listeners.PlayerInteract;
-import fr.pelt10.kubithon.hub.listeners.PlayerJoin;
-import fr.pelt10.kubithon.hub.listeners.PlayerMove;
+import fr.pelt10.kubithon.hub.listeners.*;
 import fr.pelt10.kubithon.hub.shop.ShopManager;
 import fr.pelt10.kubithon.hub.utils.HidePlayers;
 import lombok.Getter;
@@ -96,6 +93,12 @@ public class Hub {
 
             world.setWeather(Weathers.CLEAR, Long.MAX_VALUE);
 
+            new PlayerJoin(this);
+            new PlayerInteract(this);
+            new CancelAction(this);
+            new PlayerQuit(this);
+            //new PlayerMove(this);
+
             //DirtyHack to keep chunk load
             for (int x = -500; x < 500; x += 16) {
                 for (int y = 0; y < 256; y += 16) {
@@ -106,23 +109,18 @@ public class Hub {
             }
         });
 
-        dataManager = new DataManager(this, config);
-
-        communicationManager = new CommunicationManager();
-        communicationManager.registerMessage(new PlayerTeleportMessage(dataManager.getJedisUtils()));
-
-        new PlayerJoin(this);
-        new PlayerInteract(this);
-        new CancelAction(this);
-        //new PlayerMove(this);
-
-        new ShopManager(this);
-
         Task.builder().interval(10, TimeUnit.SECONDS).execute(() ->
                 getGame().getServer().getOnlinePlayers().forEach(player -> {
                     player.getFoodData().foodLevel().set(20);
                     player.getFoodData().saturation().set(20.0D);
                 })).submit(this);
+
+        dataManager = new DataManager(this, config);
+
+        communicationManager = new CommunicationManager();
+        communicationManager.registerMessage(new PlayerTeleportMessage(dataManager.getJedisUtils()));
+
+        new ShopManager(this);
     }
 
     @Listener

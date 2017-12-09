@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -20,31 +21,22 @@ public class ShopManager {
         new Thread(shopPubSub).start();
 
         Task.builder().execute(() ->
-
                 hub.getDataManager().getJedisUtils().execute(jedis -> {
-                    String data = jedis.lpop(RedisKeys.SHOP_COMMAND);
-                    while (data != null) {
-                        JsonObject obj = (JsonObject) new JsonParser().parse(data);
+                    Set<String> datas = jedis.smembers(RedisKeys.SHOP_COMMAND);
+                    if(datas != null){
+                        datas.forEach(s -> {
+                            JsonObject obj = (JsonObject) new JsonParser().parse(s);
 
-                        if (obj.has("timestamp") && (System.currentTimeMillis() - obj.get("timestamp").getAsLong() <= 30000)) {
-                            jedis.rpush(RedisKeys.SHOP_COMMAND, obj.toString());
-                            return;
-                        }
+                            String uuid = obj.get("id").getAsString().replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
 
-                        String uuid = obj.get("id").getAsString();
-                        uuid = String.format("%1$-%2$-%3$-%4$", uuid.substring(0,7), uuid.substring(7,11), uuid.substring(11,15), uuid.substring(15,20));
-
-                        Optional<Player> optionalPlayer = hub.getGame().getServer().getPlayer(UUID.fromString(uuid));
-                        if (optionalPlayer.isPresent()) {
-                            JsonArray jsonArray = obj.get("commands").getAsJsonArray();
-                            for (int i = 0; i < jsonArray.size(); i++) {
-                                hub.getGame().getCommandManager().process(hub.getGame().getServer().getConsole(), jsonArray.get(i).getAsString());
-                            }
-                        } else {
-                            obj.addProperty("timestamp", System.currentTimeMillis());
-                            jedis.rpush(RedisKeys.SHOP_COMMAND, obj.toString());
-                        }
-                        data = jedis.lpop(RedisKeys.SHOP_COMMAND);
+                            hub.getGame().getServer().getPlayer(UUID.fromString(uuid)).ifPresent(player -> {
+                                JsonArray jsonArray = obj.get("commands").getAsJsonArray();
+                                for (int i = 0; i < jsonArray.size(); i++) {
+                                    hub.getGame().getCommandManager().process(hub.getGame().getServer().getConsole(), jsonArray.get(i).getAsString());
+                                }
+                                jedis.srem(RedisKeys.SHOP_COMMAND, s);
+                            });
+                        });
                     }
                 })
         ).interval(1, TimeUnit.MINUTES).submit(hub);

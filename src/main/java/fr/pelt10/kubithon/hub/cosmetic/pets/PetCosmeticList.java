@@ -69,6 +69,7 @@ public enum PetCosmeticList implements CosmeticList {
             biConsumer.accept(petCosmetic.getEntity(), player);
         }
 
+        petCosmetic.spawn();
         return petCosmetic;
     }
 }
