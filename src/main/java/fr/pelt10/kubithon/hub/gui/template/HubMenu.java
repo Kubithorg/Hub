@@ -31,6 +31,8 @@ public class HubMenu extends InventoryGUI {
 
     @Override
     public void onAction(ClickInventoryEvent event) {
+        event.setCancelled(true);
+
         event.getTransactions().stream().filter(slotTransaction -> slotTransaction.getOriginal().getType().equals(ItemTypes.BEACON)).forEach(slotTransaction -> {
             UUID uuid = event.getCause().first(Player.class).get().getUniqueId();
             ServerInstance server = hubPlugin.getDataManager().getHub(slotTransaction.getOriginal().get(Keys.ITEM_LORE).get().get(0).toPlainSingle()).get();
@@ -38,8 +40,6 @@ public class HubMenu extends InventoryGUI {
 
                 Object[] data = {uuid, server};
                 hubPlugin.getCommunicationManager().sendMessage(PlayerTeleportMessage.class, data);
-            } else {
-                event.setCancelled(true);
             }
         });
     }
