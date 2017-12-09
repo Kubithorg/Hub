@@ -36,7 +36,10 @@ public class ShopPubSub extends JedisPubSub implements Runnable {
     public void onMessage(String channel, String message) {
         JsonObject obj = (JsonObject) new JsonParser().parse(message);
 
-        hub.getGame().getServer().getPlayer(UUID.fromString(obj.get("uuid").getAsString())).ifPresent(player -> {
+        String uuid = obj.get("uuid").getAsString();
+        uuid = String.format("%1$-%2$-%3$-%4$", uuid.substring(0,7), uuid.substring(7,11), uuid.substring(11,15), uuid.substring(15,20));
+
+        hub.getGame().getServer().getPlayer(UUID.fromString(uuid)).ifPresent(player -> {
             try {
 
                 Text msg = Text.builder("\n\nPour autoriser la connexion cliquez ici.\n\n")

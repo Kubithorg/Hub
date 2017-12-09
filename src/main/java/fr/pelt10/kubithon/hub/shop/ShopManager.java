@@ -31,7 +31,10 @@ public class ShopManager {
                             return;
                         }
 
-                        Optional<Player> optionalPlayer = hub.getGame().getServer().getPlayer(UUID.fromString(obj.get("id").getAsString()));
+                        String uuid = obj.get("id").getAsString();
+                        uuid = String.format("%1$-%2$-%3$-%4$", uuid.substring(0,7), uuid.substring(7,11), uuid.substring(11,15), uuid.substring(15,20));
+
+                        Optional<Player> optionalPlayer = hub.getGame().getServer().getPlayer(UUID.fromString(uuid));
                         if (optionalPlayer.isPresent()) {
                             JsonArray jsonArray = obj.get("commands").getAsJsonArray();
                             for (int i = 0; i < jsonArray.size(); i++) {
