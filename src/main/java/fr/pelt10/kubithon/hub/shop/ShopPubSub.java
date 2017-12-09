@@ -14,19 +14,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
-public class ShopPubSub extends JedisPubSub {
+public class ShopPubSub extends JedisPubSub implements Runnable {
     private boolean run = true;
     private Hub hub;
 
     public ShopPubSub(Hub hub) {
         this.hub = hub;
-        hub.getDataManager().getJedisUtils().execute(jedis -> {
-            new Thread(() -> {
-                while (run) {
-                    jedis.subscribe(this, RedisKeys.SHOP_LOGIN_PUBSUB);
-                }
-            }).start();
-        });
+
+    }
+
+    @Override
+    public void run() {
+        while (run) {
+            hub.getDataManager().getJedisUtils().execute(jedis -> {
+                jedis.subscribe(this, RedisKeys.SHOP_LOGIN_PUBSUB);
+            });
+        }
     }
 
     @Override

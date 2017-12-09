@@ -17,6 +17,7 @@ public class ShopManager {
 
     public ShopManager(Hub hub) {
         shopPubSub = new ShopPubSub(hub);
+        new Thread(shopPubSub).start();
 
         Task.builder().execute(() ->
 
