@@ -16,8 +16,10 @@ import org.spongepowered.api.text.format.TextStyles;
 import java.util.Arrays;
 
 public class BallonMenu extends InventoryGUI {
+    private Hub hub;
     public BallonMenu(Hub hub) {
         super(hub);
+        this.hub = hub;
     }
 
     @Override
