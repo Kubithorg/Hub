@@ -4,6 +4,7 @@ import fr.pelt10.kubithon.hub.Hub;
 import fr.pelt10.kubithon.hub.cosmetic.balloons.BallonList;
 import fr.pelt10.kubithon.hub.gui.InventoryGUI;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -20,7 +21,13 @@ public class BallonMenu extends InventoryGUI {
 
     @Override
     public void onAction(ClickInventoryEvent event) {
-
+        event.filter(itemStack -> itemStack.getType().equals(ItemTypes.WOOL)).forEach(slotTransaction ->
+            slotTransaction.getOriginal().createStack().get(Keys.DISPLAY_NAME).ifPresent(text ->
+                Arrays.stream(BallonList.values()).filter(ballon -> ballon.getName().equals(text.toPlainSingle())).forEach(ballon ->
+                        ballon.get(event.getCause().first(Player.class).get())
+                )
+            )
+        );
     }
 
     @Override
