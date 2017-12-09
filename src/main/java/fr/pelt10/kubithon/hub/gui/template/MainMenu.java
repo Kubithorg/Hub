@@ -5,6 +5,7 @@ import fr.pelt10.kubithon.hub.gui.InventoryGUI;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.scheduler.Task;
 
 public class MainMenu extends InventoryGUI {
     private Hub hub;
@@ -16,7 +17,11 @@ public class MainMenu extends InventoryGUI {
 
     @Override
     public void onAction(ClickInventoryEvent event) {
-        hub.getGuiManager().getGUI(HubMenu.class).ifPresent(menu -> event.getCause().first(Player.class).ifPresent(player -> player.openInventory(menu.getInventory())));
+        //Another Dirty Hack...
+        Task.builder().execute(() ->
+                hub.getGuiManager().getGUI(HubMenu.class).ifPresent(menu -> event.getCause().first(Player.class).ifPresent(player -> player.openInventory(menu.getInventory())))
+        ).submit(hub);
+        event.setCancelled(true);
     }
 
     @Override

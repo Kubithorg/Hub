@@ -9,6 +9,7 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextStyles;
 
@@ -21,11 +22,14 @@ public class CosmeticsMenu extends InventoryGUI {
 
     @Override
     public void onAction(ClickInventoryEvent event) {
-        event.setCancelled(true);
         event.getTransactions().stream().filter(slotTransaction -> slotTransaction.getOriginal().getType().equals(ItemTypes.WOOL)).forEach(slotTransaction -> {
-            Player player = event.getCause().first(Player.class).get();
-            player.openInventory(hub.getGuiManager().getGUI(BallonMenu.class).get().getInventory());
+            //Another Dirty Hack...
+            Task.builder().execute(() -> {
+                Player player = event.getCause().first(Player.class).get();
+                player.openInventory(hub.getGuiManager().getGUI(BallonMenu.class).get().getInventory());
+            }).submit(hub);
         });
+        event.setCancelled(true);
     }
 
     @Override
