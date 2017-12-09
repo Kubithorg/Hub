@@ -1,16 +1,21 @@
 package fr.pelt10.kubithon.hub.cosmetic.cothes;
 
-import fr.pelt10.kubithon.hub.cosmetic.AbstractCosmetic;
 import fr.pelt10.kubithon.hub.cosmetic.CosmeticList;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 public enum ClotheList implements CosmeticList {
-    TEMP;
+    ;
 
-    private ClotheList() {
+    private ClotheCosmetic.ArmorSlot armorSlot;
+    private ItemStack itemStack;
+
+    private ClotheList(ClotheCosmetic.ArmorSlot armorSlot, ItemStack itemStack) {
+        this.armorSlot = armorSlot;
+        this.itemStack = itemStack;
     }
 
-    public <T extends AbstractCosmetic> T get(Player player) {
-        return null;
+    public ClotheCosmetic get(Player player) {
+        return new ClotheCosmetic(player, armorSlot, itemStack);
     }
 }

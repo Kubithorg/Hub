@@ -28,10 +28,10 @@ public class ClotheCosmetic extends AbstractCosmetic {
     }
 
     public static enum ArmorSlot {
-        HELMET((itemStack, player) -> player.getInventory().query(new InventoryProperty[]{new SlotIndex(player.getInventory().size() - 2)}).offer(itemStack)),
-        CHESTPLATE((itemStack, player) -> player.getInventory().query(new InventoryProperty[]{new SlotIndex(player.getInventory().size() - 3)}).offer(itemStack)),
-        LEGGINGS((itemStack, player) -> player.getInventory().query(new InventoryProperty[]{new SlotIndex(player.getInventory().size() - 4)}).offer(itemStack)),
-        BOOTS((itemStack, player) -> player.getInventory().query(new InventoryProperty[]{new SlotIndex(player.getInventory().size() - 5)}).offer(itemStack));
+        HELMET((itemStack, player) -> player.setHelmet(itemStack)),
+        CHESTPLATE((itemStack, player) -> player.setChestplate(itemStack)),
+        LEGGINGS((itemStack, player) -> player.setLeggings(itemStack)),
+        BOOTS((itemStack, player) -> player.setBoots(itemStack));
 
         private BiConsumer<ItemStack, Player> consumer;
 

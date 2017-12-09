@@ -1,6 +1,8 @@
 package fr.pelt10.kubithon.hub.listeners;
 
 import fr.pelt10.kubithon.hub.Hub;
+import fr.pelt10.kubithon.hub.cosmetic.CosmeticManager;
+import fr.pelt10.kubithon.hub.gui.template.CosmeticsMenu;
 import fr.pelt10.kubithon.hub.gui.template.HubMenu;
 import fr.pelt10.kubithon.hub.utils.HidePlayers;
 import org.spongepowered.api.data.key.Keys;
@@ -51,7 +53,7 @@ public class PlayerInteract extends KubiListener {
                 player.getInventory().query(new SlotIndex(5)).set(hidePlayerItemStack);
             }
         } else if(itemStack.getType().equals(ItemTypes.CHEST)) {
-            player.sendMessage(Text.of("Not Implemented"));
+            player.openInventory(hub.getGuiManager().getGUI(CosmeticsMenu.class).get().getInventory());
         }
     }
 }
