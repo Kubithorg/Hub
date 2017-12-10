@@ -8,7 +8,7 @@ import org.spongepowered.api.entity.living.Agent;
 import org.spongepowered.api.entity.living.player.Player;
 
 public class PetCosmetic extends AbstractCosmetic {
-    private org.spongepowered.api.entity.EntityType entityType;
+    private EntityType entityType;
     private Entity entity;
 
     public PetCosmetic(Player player, EntityType entityType) {
